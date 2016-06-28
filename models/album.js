@@ -1,12 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-module.exports = mongoose.model('Bunny', new Schema( {
+module.exports = mongoose.model('Album', new Schema( {
   title: {
-    type: String
-  },
-  url: {
-    type: String
+    type: String,
+    required: true
   },
   description: {
     type: String
