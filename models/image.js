@@ -14,7 +14,7 @@ module.exports = mongoose.model('Image', new Schema( {
     type: String
   },
   album: {
-    type: Schema.Types.IbjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Album',
     required: true
   }

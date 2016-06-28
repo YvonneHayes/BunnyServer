@@ -1,6 +1,6 @@
 const express = require('express');
-const Image = require('./lib/image');
-const router = express.router();
+const Image = require('../models/image');
+const router = express.Router();
 const bodyParser = require('body-parser').json();
 
 router
@@ -22,3 +22,5 @@ router
       .then(result => res.json(result))
       .catch(err => res.status(500).json({error: {message: 'Unable to create record', reason: err}}));
   });
+
+module.exports = router;
