@@ -50,15 +50,17 @@
 	
 	var _angular2 = _interopRequireDefault(_angular);
 	
-	var _bunnyApp = __webpack_require__(3);
+	var _photoAlbum = __webpack_require__(3);
 	
-	var _bunnyApp2 = _interopRequireDefault(_bunnyApp);
+	var _photoAlbum2 = _interopRequireDefault(_photoAlbum);
 	
-	__webpack_require__(33);
+	__webpack_require__(41);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_angular2.default.bootstrap(document, [_bunnyApp2.default]);
+	_photoAlbum2.default.value('apiUrl', 'http://localhost:9000/api');
+	
+	_angular2.default.bootstrap(document, [_photoAlbum2.default.name]);
 
 /***/ },
 /* 1 */
@@ -31564,11 +31566,15 @@
 	
 	var _components2 = _interopRequireDefault(_components);
 	
+	var _services = __webpack_require__(37);
+	
+	var _services2 = _interopRequireDefault(_services);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var app = _angular2.default.module('bunnyApp', [_components2.default]);
+	var app = _angular2.default.module('photoAlbum', [_components2.default, _services2.default]);
 	
-	exports.default = app.name;
+	exports.default = app;
 
 /***/ },
 /* 4 */
@@ -32000,11 +32006,12 @@
 
 	var map = {
 		"./app/app.js": 9,
-		"./app/newBunny/newBunny.js": 15,
-		"./app/viewSelector/full/full.js": 19,
-		"./app/viewSelector/list/list.js": 23,
-		"./app/viewSelector/tile/tile.js": 27,
-		"./app/viewSelector/viewSelector.js": 31
+		"./full/full.js": 15,
+		"./list/list.js": 19,
+		"./newAlbum/newAlbum.js": 23,
+		"./newImage/newImage.js": 27,
+		"./tile/tile.js": 31,
+		"./viewSelector/viewSelector.js": 35
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -32044,25 +32051,7 @@
 	  template: _app2.default,
 	  controllerAs: 'app',
 	  controller: function controller() {
-	    var _this = this;
-	
 	    this.styles = _app4.default;
-	    this.addBunny = function (bunny) {
-	      _this.data.push(bunny);
-	    };
-	    this.data = [{
-	      title: 'Cutest Bunny Ever',
-	      description: 'This is the cutest damn bunny in all of creation.  Other things attempting to be cute tremble with terror at the cuteness of the bunny displayed here today.',
-	      url: 'http://f.cl.ly/items/3g3J1G0w122M360w380O/3726490195_f7cc75d377_o.jpg'
-	    }, {
-	      title: 'Wild Bunny',
-	      description: 'This is a wild bunny',
-	      url: 'http://slodive.com/wp-content/uploads/2013/02/cute-bunny-pictures/wild-bunny.jpg'
-	    }, {
-	      title: 'white Bunny',
-	      description: 'This is a white bunny',
-	      url: 'http://www.cutestpaw.com/wp-content/uploads/2015/05/Cute-a-bunny.jpg'
-	    }];
 	  }
 	};
 
@@ -32070,7 +32059,7 @@
 /* 10 */
 /***/ function(module, exports) {
 
-	module.exports = "<main> <h1>Bunny Image Gallery</h1> <view-selector data=app.data></view-selector> <new-bunny add=app.addBunny(bunny)></new-bunny> </main>";
+	module.exports = "<main> <h1>Image Gallery</h1> <view-selector></view-selector> </main>";
 
 /***/ },
 /* 11 */
@@ -32430,33 +32419,31 @@
 	  value: true
 	});
 	
-	var _newBunny = __webpack_require__(16);
+	var _full = __webpack_require__(16);
 	
-	var _newBunny2 = _interopRequireDefault(_newBunny);
+	var _full2 = _interopRequireDefault(_full);
 	
-	var _newBunny3 = __webpack_require__(17);
+	var _full3 = __webpack_require__(17);
 	
-	var _newBunny4 = _interopRequireDefault(_newBunny3);
+	var _full4 = _interopRequireDefault(_full3);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  template: _newBunny2.default,
-	  controllerAs: 'newBunny',
+	  template: _full2.default,
+	  controllerAs: 'full',
 	  bindings: {
-	    add: '&'
+	    data: '<'
 	  },
 	  controller: function controller() {
-	    var _this = this;
-	
-	    this.styles = _newBunny4.default;
-	    this.submit = function () {
-	      var bunny = { title: _this.title, description: _this.description, url: _this.url };
-	      _this.add({ bunny: bunny });
-	      _this.title = '';
-	      _this.description = '';
-	      _this.url = '';
+	    this.index = 0;
+	    this.prev = function () {
+	      if (--this.index < 0) this.index = this.data.length - 1;
 	    };
+	    this.next = function () {
+	      if (++this.index > this.data.length - 1) this.index = 0;
+	    };
+	    this.styles = _full4.default;
 	  }
 	};
 
@@ -32464,7 +32451,7 @@
 /* 16 */
 /***/ function(module, exports) {
 
-	module.exports = "<section> <h2 ng-class=newBunny.styles.headline>Add a Bunny</h2> <form name=form ng-submit=newBunny.submit()> <input ng-model=newBunny.title placeholder=title><br> <input ng-model=newBunny.description placeholder=description><br> <input ng-model=newBunny.url placeholder=url><br> <button type=submit>Add Bunny</button> </form> </section>";
+	module.exports = "<section> <button ng-click=full.prev()>Prev</button><button ng-click=full.next()>Next</button> <p> </p><h3>{{full.data[full.index].title}}</h3> <img src={{full.data[full.index].url}}><br> {{full.data[full.index].description}} <p></p> </section>";
 
 /***/ },
 /* 17 */
@@ -32482,8 +32469,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/sass-loader/index.js?sourceMap!./newBunny.scss", function() {
-				var newContent = require("!!./../../../../node_modules/css-loader/index.js?sourceMap!./../../../../node_modules/sass-loader/index.js?sourceMap!./newBunny.scss");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./full.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./full.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -32501,7 +32488,7 @@
 	
 	
 	// module
-	exports.push([module.id, "\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"newBunny.scss","sourceRoot":"webpack://"}]);
+	exports.push([module.id, "img {\n  max-width: 500px; }\n", "", {"version":3,"sources":["/./src/app/src/components/full/full.scss"],"names":[],"mappings":"AAIA;EACE,iBAAiB,EAClB","file":"full.scss","sourcesContent":["// :local(.headline){\n//   color: green;\n// }\n\nimg {\n  max-width: 500px;\n}\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
@@ -32516,31 +32503,24 @@
 	  value: true
 	});
 	
-	var _full = __webpack_require__(20);
+	var _list = __webpack_require__(20);
 	
-	var _full2 = _interopRequireDefault(_full);
+	var _list2 = _interopRequireDefault(_list);
 	
-	var _full3 = __webpack_require__(21);
+	var _list3 = __webpack_require__(21);
 	
-	var _full4 = _interopRequireDefault(_full3);
+	var _list4 = _interopRequireDefault(_list3);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  template: _full2.default,
-	  controllerAs: 'full',
+	  template: _list2.default,
+	  controllerAs: 'list',
 	  bindings: {
-	    data: '='
+	    data: '<'
 	  },
 	  controller: function controller() {
-	    this.index = 0;
-	    this.prev = function () {
-	      if (--this.index < 0) this.index = this.data.length - 1;
-	    };
-	    this.next = function () {
-	      if (++this.index > this.data.length - 1) this.index = 0;
-	    };
-	    this.styles = _full4.default;
+	    this.styles = _list4.default;
 	  }
 	};
 
@@ -32548,7 +32528,7 @@
 /* 20 */
 /***/ function(module, exports) {
 
-	module.exports = "<section> <button ng-click=full.prev()>Prev</button><button ng-click=full.next()>Next</button> <p> </p><h3>{{full.data[full.index].title}}</h3> <img src={{full.data[full.index].url}}><br> {{full.data[full.index].description}} <p></p> </section>";
+	module.exports = "<section> <div ng-class=list.styles.div> <ul ng-class=list.styles.unordered> <li ng-repeat=\"image in list.data\" ng-class=list.styles.items> <a href={{image.url}}>{{image.title}}</a> <br>{{image.description}} </li> </ul> </div> </section>";
 
 /***/ },
 /* 21 */
@@ -32566,8 +32546,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../../node_modules/css-loader/index.js?sourceMap!./../../../../../node_modules/sass-loader/index.js?sourceMap!./full.scss", function() {
-				var newContent = require("!!./../../../../../node_modules/css-loader/index.js?sourceMap!./../../../../../node_modules/sass-loader/index.js?sourceMap!./full.scss");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./list.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./list.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -32585,10 +32565,14 @@
 	
 	
 	// module
-	exports.push([module.id, "img {\n  max-width: 500px; }\n", "", {"version":3,"sources":["/./src/components/app/app/src/components/app/viewSelector/full/full.scss"],"names":[],"mappings":"AAIA;EACE,iBAAiB,EAClB","file":"full.scss","sourcesContent":["// :local(.headline){\n//   color: green;\n// }\n\nimg {\n  max-width: 500px;\n}\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "._1RMuL80zUn1vgZETTAC8M5 {\n  width: 60%;\n  margin: 30px; }\n\n._3ll4GxQYGFdGbP2_pcbT77 {\n  list-style-type: none;\n  margin: 0;\n  padding: 0; }\n\n._2xY-M8YcSAKRi5QuCLz0D1 {\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc; }\n  ._2xY-M8YcSAKRi5QuCLz0D1:last-child {\n    border: none; }\n  ._2xY-M8YcSAKRi5QuCLz0D1 a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -moz-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -o-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -ms-transition: font-size 0.3s ease, background-color 0.3s ease;\n    transition: font-size 0.3s ease, background-color 0.3s ease; }\n  ._2xY-M8YcSAKRi5QuCLz0D1 a:hover {\n    font-size: 30px;\n    background: #f6f6f6; }\n", "", {"version":3,"sources":["/./src/app/src/components/list/list.scss"],"names":[],"mappings":"AAQA;EACE,WAAW;EACX,aAAa,EACd;;AAED;EACE,sBAAsB;EACtB,UAAU;EACV,WAAW,EACZ;;AAED;EACE,kDAAkD;EAClD,8BAA8B,EAiB/B;EAnBD;IAKI,aAAa,EACd;EANH;IASI,sBAAsB;IACtB,YAAY;IACZ,eAAe;IA7BjB,oEAAqE;IAClE,iEAAkE;IAChE,+DAAgE;IACjE,gEAAiE;IAC7D,4DAA6D,EA2BpE;EAbH;IAgBI,gBAAgB;IAChB,oBAAoB,EACrB","file":"list.scss","sourcesContent":["@mixin transition-effect($time) {\n  -webkit-transition: font-size $time ease, background-color $time ease;\n     -moz-transition: font-size $time ease, background-color $time ease;\n       -o-transition: font-size $time ease, background-color $time ease;\n      -ms-transition: font-size $time ease, background-color $time ease;\n          transition: font-size $time ease, background-color $time ease;\n}\n\n:local(.div) {\n  width: 60%;\n  margin: 30px;\n}\n\n:local(.unordered) {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n}\n\n:local(.items) {\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc;\n\n  &:last-child {\n    border: none;\n  }\n\n  a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    @include transition-effect(0.3s);\n  }\n\n  a:hover {\n    font-size: 30px;\n    background: #f6f6f6;\n  }\n}\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
-
+	exports.locals = {
+		"div": "_1RMuL80zUn1vgZETTAC8M5",
+		"unordered": "_3ll4GxQYGFdGbP2_pcbT77",
+		"items": "_2xY-M8YcSAKRi5QuCLz0D1"
+	};
 
 /***/ },
 /* 23 */
@@ -32600,25 +32584,31 @@
 	  value: true
 	});
 	
-	var _list = __webpack_require__(24);
+	var _newAlbum = __webpack_require__(24);
 	
-	var _list2 = _interopRequireDefault(_list);
+	var _newAlbum2 = _interopRequireDefault(_newAlbum);
 	
-	var _list3 = __webpack_require__(25);
+	var _newAlbum3 = __webpack_require__(25);
 	
-	var _list4 = _interopRequireDefault(_list3);
+	var _newAlbum4 = _interopRequireDefault(_newAlbum3);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  template: _list2.default,
-	  controllerAs: 'list',
+	  template: _newAlbum2.default,
+	  controllerAs: 'newAlbum',
 	  bindings: {
-	    data: '='
+	    add: '&'
 	  },
 	  controller: function controller() {
-	    console.log(this.data);
-	    this.styles = _list4.default;
+	    var _this = this;
+	
+	    this.styles = _newAlbum4.default;
+	    this.submit = function () {
+	      var album = _this.album;
+	      _this.add({ album: album });
+	      _this.album = {};
+	    };
 	  }
 	};
 
@@ -32626,7 +32616,7 @@
 /* 24 */
 /***/ function(module, exports) {
 
-	module.exports = "<section> <div ng-class=list.styles.div> <ul ng-class=list.styles.unordered> <li ng-repeat=\"image in list.data\" ng-class=list.styles.items> <a href={{image.url}}>{{image.title}}</a> <br>{{image.description}} </li> </ul> </div> </section>";
+	module.exports = "<section> <h2 ng-class=newAlbum.styles.headline>Add a new Album</h2> <form name=form ng-submit=newAlbum.submit()> <input ng-model=newAlbum.album.title placeholder=title><br> <input ng-model=newAlbum.album.description placeholder=description><br> <button type=submit>Add Album</button> </form> </section>";
 
 /***/ },
 /* 25 */
@@ -32644,8 +32634,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../../node_modules/css-loader/index.js?sourceMap!./../../../../../node_modules/sass-loader/index.js?sourceMap!./list.scss", function() {
-				var newContent = require("!!./../../../../../node_modules/css-loader/index.js?sourceMap!./../../../../../node_modules/sass-loader/index.js?sourceMap!./list.scss");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newAlbum.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newAlbum.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -32663,14 +32653,10 @@
 	
 	
 	// module
-	exports.push([module.id, "._2Sc2gCuyQIINnpnlYRGOg2 {\n  width: 60%;\n  margin: 30px; }\n\n._3d1f7FfyspdSHMID_PmBG5 {\n  list-style-type: none;\n  margin: 0;\n  padding: 0; }\n\n.PMz2sxz_sYVksifBbQQ3Z {\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc; }\n  .PMz2sxz_sYVksifBbQQ3Z:last-child {\n    border: none; }\n  .PMz2sxz_sYVksifBbQQ3Z a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -moz-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -o-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -ms-transition: font-size 0.3s ease, background-color 0.3s ease;\n    transition: font-size 0.3s ease, background-color 0.3s ease; }\n  .PMz2sxz_sYVksifBbQQ3Z a:hover {\n    font-size: 30px;\n    background: #f6f6f6; }\n", "", {"version":3,"sources":["/./src/components/app/app/src/components/app/viewSelector/list/list.scss"],"names":[],"mappings":"AAQA;EACE,WAAW;EACX,aAAa,EACd;;AAED;EACE,sBAAsB;EACtB,UAAU;EACV,WAAW,EACZ;;AAED;EACE,kDAAkD;EAClD,8BAA8B,EAiB/B;EAnBD;IAKI,aAAa,EACd;EANH;IASI,sBAAsB;IACtB,YAAY;IACZ,eAAe;IA7BjB,oEAAqE;IAClE,iEAAkE;IAChE,+DAAgE;IACjE,gEAAiE;IAC7D,4DAA6D,EA2BpE;EAbH;IAgBI,gBAAgB;IAChB,oBAAoB,EACrB","file":"list.scss","sourcesContent":["@mixin transition-effect($time) {\n  -webkit-transition: font-size $time ease, background-color $time ease;\n     -moz-transition: font-size $time ease, background-color $time ease;\n       -o-transition: font-size $time ease, background-color $time ease;\n      -ms-transition: font-size $time ease, background-color $time ease;\n          transition: font-size $time ease, background-color $time ease;\n}\n\n:local(.div) {\n  width: 60%;\n  margin: 30px;\n}\n\n:local(.unordered) {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n}\n\n:local(.items) {\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc;\n\n  &:last-child {\n    border: none;\n  }\n\n  a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    @include transition-effect(0.3s);\n  }\n\n  a:hover {\n    font-size: 30px;\n    background: #f6f6f6;\n  }\n}\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"newAlbum.scss","sourceRoot":"webpack://"}]);
 	
 	// exports
-	exports.locals = {
-		"div": "_2Sc2gCuyQIINnpnlYRGOg2",
-		"unordered": "_3d1f7FfyspdSHMID_PmBG5",
-		"items": "PMz2sxz_sYVksifBbQQ3Z"
-	};
+
 
 /***/ },
 /* 27 */
@@ -32682,32 +32668,47 @@
 	  value: true
 	});
 	
-	var _tile = __webpack_require__(28);
+	var _newImage = __webpack_require__(28);
 	
-	var _tile2 = _interopRequireDefault(_tile);
+	var _newImage2 = _interopRequireDefault(_newImage);
 	
-	var _tile3 = __webpack_require__(29);
+	var _newImage3 = __webpack_require__(29);
 	
-	var _tile4 = _interopRequireDefault(_tile3);
+	var _newImage4 = _interopRequireDefault(_newImage3);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  template: _tile2.default,
-	  controllerAs: 'tile',
+	  template: _newImage2.default,
+	  controllerAs: 'newImage',
 	  bindings: {
-	    data: '='
+	    add: '&'
 	  },
-	  controller: function controller() {
-	    this.styles = _tile4.default;
-	  }
+	  controller: controller
 	};
+	
+	
+	controller.inject = ['albumService'];
+	
+	function controller(albumService) {
+	  var _this = this;
+	
+	  albumService.get().then(function (albums) {
+	    _this.albums = albums;
+	  });
+	  this.styles = _newImage4.default;
+	  this.submit = function () {
+	    var image = _this.image;
+	    _this.add({ image: image });
+	    _this.image = {};
+	  };
+	}
 
 /***/ },
 /* 28 */
 /***/ function(module, exports) {
 
-	module.exports = "<section> <div ng-class=tile.styles.div> <section ng-class=tile.styles.tile ng-repeat=\"image in tile.data\"> <h4>{{image.title}}</h4> <img ng-class=tile.styles.image title={{image.description}} src={{image.url}}> </section> </div> </section>";
+	module.exports = "<section> <h2 ng-class=newImage.styles.headline>Add a new Image</h2> <form name=form ng-submit=newImage.submit()> <input ng-model=newImage.image.title placeholder=title><br> <input ng-model=newImage.image.description placeholder=description><br> <input ng-model=newImage.image.url placeholder=url><br> <select ng-model=newImage.image.album> <option>-- Select an album --</option> <option ng-repeat=\"album in newImage.albums\" value={{album._id}}>{{album.title}}</option> </select> <button type=submit>Add Image</button> </form> </section>";
 
 /***/ },
 /* 29 */
@@ -32725,8 +32726,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!./../../../../../node_modules/css-loader/index.js?sourceMap!./../../../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss", function() {
-				var newContent = require("!!./../../../../../node_modules/css-loader/index.js?sourceMap!./../../../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss");
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newImage.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newImage.scss");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -32744,15 +32745,10 @@
 	
 	
 	// module
-	exports.push([module.id, "._3p93btPSyq6Ti-UOIJ8yrM {\n  height: 80%;\n  width: 80%;\n  display: block;\n  margin: 0 auto; }\n\n._2VOIjUbFhc0ybEB4SLHrxc {\n  list-style: none; }\n\n._3JUhdniIlG5yjJD6iza3Q0 {\n  height: 220px;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow: 3px 3px 8px black;\n  border: 1px solid darkgray; }\n\n.jN4RRD1LuZaG5pAujltj2 {\n  width: 92%;\n  min-height: 264px;\n  height: auto;\n  padding: 8px;\n  display: flex;\n  flex-flow: row wrap;\n  border: 1px solid darkgray;\n  margin: 0 auto; }\n", "", {"version":3,"sources":["/./src/components/app/app/src/components/app/viewSelector/tile/tile.scss"],"names":[],"mappings":"AAMA;EACE,YAJc;EAKd,WALc;EAMd,eAAc;EACd,eAAc,EACf;;AAED;EACE,iBAAiB,EAClB;;AAED;EACE,cAbiB;EAcjB,aAAa;EACb,iBAAiB;EACjB,aAAa;EACb,cAAc;EACd,8BAA6B;EAtB7B,2BAA2B,EAwB5B;;AAED;EACE,WAAU;EACV,kBAAwB;EACxB,aAAY;EACZ,aAAY;EACZ,cAAc;EACd,oBAAoB;EAhCpB,2BAA2B;EAkC3B,eAAe,EAChB","file":"tile.scss","sourcesContent":["@mixin border {\n  border: 1px solid darkgray;\n}\n$thumb-size: 80%;\n\n$tile-height: 220px;\n:local(.image) {\n  height: $thumb-size;\n  width: $thumb-size;\n  display:block;\n  margin:0 auto;\n}\n\n:local(.list) {\n  list-style: none;\n}\n\n:local(.tile) {\n  height: $tile-height;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow:3px 3px 8px black;\n  @include border;\n}\n\n:local(.div){\n  width:92%;\n  min-height: $tile-height * 1.2;\n  height:auto;\n  padding:8px;\n  display: flex;\n  flex-flow: row wrap;\n  @include border;\n  margin: 0 auto;\n}\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"newImage.scss","sourceRoot":"webpack://"}]);
 	
 	// exports
-	exports.locals = {
-		"image": "_3p93btPSyq6Ti-UOIJ8yrM",
-		"list": "_2VOIjUbFhc0ybEB4SLHrxc",
-		"tile": "_3JUhdniIlG5yjJD6iza3Q0",
-		"div": "jN4RRD1LuZaG5pAujltj2"
-	};
+
 
 /***/ },
 /* 31 */
@@ -32764,20 +32760,24 @@
 	  value: true
 	});
 	
-	var _viewSelector = __webpack_require__(32);
+	var _tile = __webpack_require__(32);
 	
-	var _viewSelector2 = _interopRequireDefault(_viewSelector);
+	var _tile2 = _interopRequireDefault(_tile);
+	
+	var _tile3 = __webpack_require__(33);
+	
+	var _tile4 = _interopRequireDefault(_tile3);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = {
-	  template: _viewSelector2.default,
-	  controllerAs: 'viewSelector',
+	  template: _tile2.default,
+	  controllerAs: 'tile',
 	  bindings: {
-	    data: '='
+	    data: '<'
 	  },
 	  controller: function controller() {
-	    this.view = 'tile';
+	    this.styles = _tile4.default;
 	  }
 	};
 
@@ -32785,7 +32785,7 @@
 /* 32 */
 /***/ function(module, exports) {
 
-	module.exports = "<section> <nav> Choose your display:&nbsp; <input id=list type=radio ng-model=viewSelector.view value=list> <label for=list>List</label> <input id=tile type=radio ng-model=viewSelector.view value=tile> <label for=tile>Tile</label> <input id=full type=radio ng-model=viewSelector.view value=full> <label for=full>Slideshow</label> </nav> <list ng-if=\"(viewSelector.view === 'list')\" data=viewSelector.data></list> <tile ng-if=\"(viewSelector.view === 'tile')\" data=viewSelector.data></tile> <full ng-if=\"(viewSelector.view === 'full')\" data=viewSelector.data></full> </section>";
+	module.exports = "<section> <div ng-class=tile.styles.div> <section ng-class=tile.styles.tile ng-repeat=\"image in tile.data\"> <h4>{{image.title}}</h4> <img ng-class=tile.styles.image title={{image.description}} src={{image.url}}> </section> </div> </section>";
 
 /***/ },
 /* 33 */
@@ -32795,6 +32795,235 @@
 	
 	// load the styles
 	var content = __webpack_require__(34);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(14)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(13)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "._3Z9723Z-u3TyVc5DrtY4y8 {\n  height: 80%;\n  width: 80%;\n  display: block;\n  margin: 0 auto; }\n\n._1PzfbPn0h_F2FO1IfolxEV {\n  list-style: none; }\n\n._2KyHjiWk8wm9-vDLYGthQ {\n  height: 220px;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow: 3px 3px 8px black;\n  border: 1px solid darkgray; }\n\n._1RgYnP1XMyv_tNjt-uj1fu {\n  width: 92%;\n  min-height: 264px;\n  height: auto;\n  padding: 8px;\n  display: flex;\n  flex-flow: row wrap;\n  border: 1px solid darkgray;\n  margin: 0 auto; }\n", "", {"version":3,"sources":["/./src/app/src/components/tile/tile.scss"],"names":[],"mappings":"AAMA;EACE,YAJc;EAKd,WALc;EAMd,eAAc;EACd,eAAc,EACf;;AAED;EACE,iBAAiB,EAClB;;AAED;EACE,cAbiB;EAcjB,aAAa;EACb,iBAAiB;EACjB,aAAa;EACb,cAAc;EACd,8BAA6B;EAtB7B,2BAA2B,EAwB5B;;AAED;EACE,WAAU;EACV,kBAAwB;EACxB,aAAY;EACZ,aAAY;EACZ,cAAc;EACd,oBAAoB;EAhCpB,2BAA2B;EAkC3B,eAAe,EAChB","file":"tile.scss","sourcesContent":["@mixin border {\n  border: 1px solid darkgray;\n}\n$thumb-size: 80%;\n\n$tile-height: 220px;\n:local(.image) {\n  height: $thumb-size;\n  width: $thumb-size;\n  display:block;\n  margin:0 auto;\n}\n\n:local(.list) {\n  list-style: none;\n}\n\n:local(.tile) {\n  height: $tile-height;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow:3px 3px 8px black;\n  @include border;\n}\n\n:local(.div){\n  width:92%;\n  min-height: $tile-height * 1.2;\n  height:auto;\n  padding:8px;\n  display: flex;\n  flex-flow: row wrap;\n  @include border;\n  margin: 0 auto;\n}\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+	exports.locals = {
+		"image": "_3Z9723Z-u3TyVc5DrtY4y8",
+		"list": "_1PzfbPn0h_F2FO1IfolxEV",
+		"tile": "_2KyHjiWk8wm9-vDLYGthQ",
+		"div": "_1RgYnP1XMyv_tNjt-uj1fu"
+	};
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _viewSelector = __webpack_require__(36);
+	
+	var _viewSelector2 = _interopRequireDefault(_viewSelector);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _viewSelector2.default,
+	  controllerAs: 'viewSelector',
+	  controller: controller
+	};
+	
+	
+	controller.inject = ['albumService', 'imageService'];
+	
+	function controller(albumService, imageService) {
+	  var _this = this;
+	
+	  this.getImages = function (album) {
+	    imageService.getImagesByAlbum(album).then(function (images) {
+	      return _this.images = images;
+	    });
+	  };
+	  this.addImage = function (image) {
+	    imageService.add(image);
+	    imageService.getImagesByAlbum(_this.albumId).then(function (images) {
+	      return _this.images = images;
+	    });
+	  };
+	  this.addAlbum = function (album) {
+	    albumService.add(album);
+	    albumService.get().then(function (albums) {
+	      return _this.albums = albums;
+	    });
+	  };
+	  imageService.get().then(function (images) {
+	    return _this.images = images;
+	  });
+	  albumService.get().then(function (albums) {
+	    return _this.albums = albums;
+	  });
+	
+	  this.view = 'tile';
+	}
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <nav> Pick an album:&nbsp; <select ng-model=viewSelector.albumId ng-change=viewSelector.getImages(viewSelector.albumId)> <option ng-if=!viewSelector.albumId value=\"\" ng-selected=selected>-- Select an album --</option> <option ng-repeat=\"album in viewSelector.albums\" value={{album._id}}>{{album.title}}</option> </select> Choose your display:&nbsp; <input id=list type=radio ng-model=viewSelector.view value=list> <label for=list>List</label> <input id=tile type=radio ng-model=viewSelector.view value=tile> <label for=tile>Tile</label> <input id=full type=radio ng-model=viewSelector.view value=full> <label for=full>Slideshow</label> </nav> <list ng-if=\"(viewSelector.view === 'list')\" data=viewSelector.images></list> <tile ng-if=\"(viewSelector.view === 'tile')\" data=viewSelector.images></tile> <full ng-if=\"(viewSelector.view === 'full')\" data=viewSelector.images></full> <hr> <new-image add=viewSelector.addImage(image)></new-image> <new-album add=viewSelector.addAlbum(album)></new-album> </section>";
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _angular = __webpack_require__(1);
+	
+	var _angular2 = _interopRequireDefault(_angular);
+	
+	var _camelcase = __webpack_require__(5);
+	
+	var _camelcase2 = _interopRequireDefault(_camelcase);
+	
+	var _path = __webpack_require__(6);
+	
+	var _path2 = _interopRequireDefault(_path);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var reqContext = __webpack_require__(38);
+	
+	var services = _angular2.default.module('services', []);
+	
+	reqContext.keys().forEach(function (key) {
+		var name = (0, _camelcase2.default)(_path2.default.basename(key, '.js'));
+		services.factory(name, reqContext(key).default);
+	});
+	
+	exports.default = services.name;
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./albumService.js": 39,
+		"./imageService.js": 40
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 38;
+
+
+/***/ },
+/* 39 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = albumService;
+	albumService.$inject = ['$http', 'apiUrl'];
+	
+	function albumService($http, apiUrl) {
+	
+	  return {
+	    get: function get() {
+	      return $http.get(apiUrl + '/album').then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    add: function add(album) {
+	      return $http.post(apiUrl + '/album', album).then(function (r) {
+	        return r.data;
+	      });
+	    }
+	  };
+	}
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = imageService;
+	imageService.$inject = ['$http', 'apiUrl'];
+	
+	function imageService($http, apiUrl) {
+	
+	  return {
+	    get: function get() {
+	      return $http.get(apiUrl + '/image').then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    getImage: function getImage(imageId) {
+	      return $http.get(apiUrl + '/image/' + imageId).then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    getImagesByAlbum: function getImagesByAlbum(albumId) {
+	      return $http.get(apiUrl + '/album/' + albumId).then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    add: function add(image) {
+	      return $http.post(apiUrl + '/image', image).then(function (r) {
+	        return r.data;
+	      });
+	    }
+	  };
+	}
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(42);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
 	var update = __webpack_require__(14)(content, {});
@@ -32814,7 +33043,7 @@
 	}
 
 /***/ },
-/* 34 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	exports = module.exports = __webpack_require__(13)();

@@ -7,5 +7,5 @@ require ('./lib/setup-mongoose');
 app.listen(port, err =>{
   if (err) return console.error(err);
 
-  console.log(`Magic happens at: http://localhost:${port}/`);
+  console.log(`Server started at: http://localhost:${port}/`);
 });
