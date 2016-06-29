@@ -21,6 +21,11 @@ router
       .save()
       .then(result => res.json(result))
       .catch(err => res.status(500).json({error: {message: 'Unable to create record', reason: err}}));
+  })
+  .delete('/:id', (req, res) => {
+    Image.findByIdAndRemove(req.params.id)
+    .then(result => res.json(result))
+    .catch(err => res.status(500).json({error: {message: 'Unable to delete record', reason: err}}));
   });
 
 module.exports = router;
