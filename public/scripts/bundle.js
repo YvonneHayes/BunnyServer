@@ -58,7 +58,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	_photoAlbum2.default.value('apiUrl', 'http://localhost:9000/api');
+	_photoAlbum2.default.value('apiUrl', '/api');
 	
 	_angular2.default.bootstrap(document, [_photoAlbum2.default.name]);
 
