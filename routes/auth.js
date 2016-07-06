@@ -5,7 +5,7 @@ const token = require('../lib/token');
 const ensureAuth = require('../lib/ensureAuth');
 
 router
-  .get('/validate', ensureAuth, (req,res) => {
+  .get('/verify', ensureAuth, (req,res) => {
     res.json({valid: 'true'});
   })
   .post('/signup', bodyParser, (req, res, next) => {
