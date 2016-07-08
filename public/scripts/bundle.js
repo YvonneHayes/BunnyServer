@@ -54,17 +54,28 @@
 	
 	var _photoAlbum2 = _interopRequireDefault(_photoAlbum);
 	
-	__webpack_require__(48);
+	__webpack_require__(66);
 	
-	var _routes = __webpack_require__(50);
+	var _routes = __webpack_require__(68);
 	
 	var _routes2 = _interopRequireDefault(_routes);
 	
+	var _http = __webpack_require__(69);
+	
+	var _http2 = _interopRequireDefault(_http);
+	
+	var _auth = __webpack_require__(70);
+	
+	var _auth2 = _interopRequireDefault(_auth);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	_photoAlbum2.default.config(_http2.default);
 	_photoAlbum2.default.config(_routes2.default);
 	
 	_photoAlbum2.default.value('apiUrl', 'http://localhost:9000/api');
+	
+	_photoAlbum2.default.run(_auth2.default);
 	
 	_angular2.default.bootstrap(document, [_photoAlbum2.default.name]);
 
@@ -31568,1656 +31579,36 @@
 	
 	var _angular2 = _interopRequireDefault(_angular);
 	
-	var _components = __webpack_require__(4);
-	
-	var _components2 = _interopRequireDefault(_components);
-	
-	var _services = __webpack_require__(43);
-	
-	var _services2 = _interopRequireDefault(_services);
-	
-	var _angularUiRouter = __webpack_require__(47);
+	var _angularUiRouter = __webpack_require__(4);
 	
 	var _angularUiRouter2 = _interopRequireDefault(_angularUiRouter);
 	
+	var _components = __webpack_require__(5);
+	
+	var _components2 = _interopRequireDefault(_components);
+	
+	var _services = __webpack_require__(54);
+	
+	var _services2 = _interopRequireDefault(_services);
+	
+	var _ngDialog = __webpack_require__(60);
+	
+	var _ngDialog2 = _interopRequireDefault(_ngDialog);
+	
+	__webpack_require__(61);
+	
+	__webpack_require__(63);
+	
+	__webpack_require__(65);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var app = _angular2.default.module('photoAlbum', [_components2.default, _angularUiRouter2.default, _services2.default]);
+	var app = _angular2.default.module('photoAlbum', [_angularUiRouter2.default, _angular2.default.module('ui.router.state.events').name, _ngDialog2.default, _components2.default, _services2.default]);
 	
 	exports.default = app;
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _angular = __webpack_require__(1);
-	
-	var _angular2 = _interopRequireDefault(_angular);
-	
-	var _camelcase = __webpack_require__(5);
-	
-	var _camelcase2 = _interopRequireDefault(_camelcase);
-	
-	var _path = __webpack_require__(6);
-	
-	var _path2 = _interopRequireDefault(_path);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var reqContext = __webpack_require__(8);
-	
-	var components = _angular2.default.module('components', []);
-	
-	reqContext.keys().forEach(function (key) {
-	    var name = (0, _camelcase2.default)(_path2.default.basename(key, '.js'));
-	    components.component(name, reqContext(key).default);
-	});
-	
-	exports.default = components.name;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	'use strict';
-	module.exports = function () {
-		var str = [].map.call(arguments, function (str) {
-			return str.trim();
-		}).filter(function (str) {
-			return str.length;
-		}).join('-');
-	
-		if (!str.length) {
-			return '';
-		}
-	
-		if (str.length === 1 || !(/[_.\- ]+/).test(str) ) {
-			if (str[0] === str[0].toLowerCase() && str.slice(1) !== str.slice(1).toLowerCase()) {
-				return str;
-			}
-	
-			return str.toLowerCase();
-		}
-	
-		return str
-		.replace(/^[_.\- ]+/, '')
-		.toLowerCase()
-		.replace(/[_.\- ]+(\w|$)/g, function (m, p1) {
-			return p1.toUpperCase();
-		});
-	};
-
-
-/***/ },
-/* 6 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
-	//
-	// Permission is hereby granted, free of charge, to any person obtaining a
-	// copy of this software and associated documentation files (the
-	// "Software"), to deal in the Software without restriction, including
-	// without limitation the rights to use, copy, modify, merge, publish,
-	// distribute, sublicense, and/or sell copies of the Software, and to permit
-	// persons to whom the Software is furnished to do so, subject to the
-	// following conditions:
-	//
-	// The above copyright notice and this permission notice shall be included
-	// in all copies or substantial portions of the Software.
-	//
-	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-	// USE OR OTHER DEALINGS IN THE SOFTWARE.
-	
-	// resolves . and .. elements in a path array with directory names there
-	// must be no slashes, empty elements, or device names (c:\) in the array
-	// (so also no leading and trailing slashes - it does not distinguish
-	// relative and absolute paths)
-	function normalizeArray(parts, allowAboveRoot) {
-	  // if the path tries to go above the root, `up` ends up > 0
-	  var up = 0;
-	  for (var i = parts.length - 1; i >= 0; i--) {
-	    var last = parts[i];
-	    if (last === '.') {
-	      parts.splice(i, 1);
-	    } else if (last === '..') {
-	      parts.splice(i, 1);
-	      up++;
-	    } else if (up) {
-	      parts.splice(i, 1);
-	      up--;
-	    }
-	  }
-	
-	  // if the path is allowed to go above the root, restore leading ..s
-	  if (allowAboveRoot) {
-	    for (; up--; up) {
-	      parts.unshift('..');
-	    }
-	  }
-	
-	  return parts;
-	}
-	
-	// Split a filename into [root, dir, basename, ext], unix version
-	// 'root' is just a slash, or nothing.
-	var splitPathRe =
-	    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
-	var splitPath = function(filename) {
-	  return splitPathRe.exec(filename).slice(1);
-	};
-	
-	// path.resolve([from ...], to)
-	// posix version
-	exports.resolve = function() {
-	  var resolvedPath = '',
-	      resolvedAbsolute = false;
-	
-	  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
-	    var path = (i >= 0) ? arguments[i] : process.cwd();
-	
-	    // Skip empty and invalid entries
-	    if (typeof path !== 'string') {
-	      throw new TypeError('Arguments to path.resolve must be strings');
-	    } else if (!path) {
-	      continue;
-	    }
-	
-	    resolvedPath = path + '/' + resolvedPath;
-	    resolvedAbsolute = path.charAt(0) === '/';
-	  }
-	
-	  // At this point the path should be resolved to a full absolute path, but
-	  // handle relative paths to be safe (might happen when process.cwd() fails)
-	
-	  // Normalize the path
-	  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
-	    return !!p;
-	  }), !resolvedAbsolute).join('/');
-	
-	  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
-	};
-	
-	// path.normalize(path)
-	// posix version
-	exports.normalize = function(path) {
-	  var isAbsolute = exports.isAbsolute(path),
-	      trailingSlash = substr(path, -1) === '/';
-	
-	  // Normalize the path
-	  path = normalizeArray(filter(path.split('/'), function(p) {
-	    return !!p;
-	  }), !isAbsolute).join('/');
-	
-	  if (!path && !isAbsolute) {
-	    path = '.';
-	  }
-	  if (path && trailingSlash) {
-	    path += '/';
-	  }
-	
-	  return (isAbsolute ? '/' : '') + path;
-	};
-	
-	// posix version
-	exports.isAbsolute = function(path) {
-	  return path.charAt(0) === '/';
-	};
-	
-	// posix version
-	exports.join = function() {
-	  var paths = Array.prototype.slice.call(arguments, 0);
-	  return exports.normalize(filter(paths, function(p, index) {
-	    if (typeof p !== 'string') {
-	      throw new TypeError('Arguments to path.join must be strings');
-	    }
-	    return p;
-	  }).join('/'));
-	};
-	
-	
-	// path.relative(from, to)
-	// posix version
-	exports.relative = function(from, to) {
-	  from = exports.resolve(from).substr(1);
-	  to = exports.resolve(to).substr(1);
-	
-	  function trim(arr) {
-	    var start = 0;
-	    for (; start < arr.length; start++) {
-	      if (arr[start] !== '') break;
-	    }
-	
-	    var end = arr.length - 1;
-	    for (; end >= 0; end--) {
-	      if (arr[end] !== '') break;
-	    }
-	
-	    if (start > end) return [];
-	    return arr.slice(start, end - start + 1);
-	  }
-	
-	  var fromParts = trim(from.split('/'));
-	  var toParts = trim(to.split('/'));
-	
-	  var length = Math.min(fromParts.length, toParts.length);
-	  var samePartsLength = length;
-	  for (var i = 0; i < length; i++) {
-	    if (fromParts[i] !== toParts[i]) {
-	      samePartsLength = i;
-	      break;
-	    }
-	  }
-	
-	  var outputParts = [];
-	  for (var i = samePartsLength; i < fromParts.length; i++) {
-	    outputParts.push('..');
-	  }
-	
-	  outputParts = outputParts.concat(toParts.slice(samePartsLength));
-	
-	  return outputParts.join('/');
-	};
-	
-	exports.sep = '/';
-	exports.delimiter = ':';
-	
-	exports.dirname = function(path) {
-	  var result = splitPath(path),
-	      root = result[0],
-	      dir = result[1];
-	
-	  if (!root && !dir) {
-	    // No dirname whatsoever
-	    return '.';
-	  }
-	
-	  if (dir) {
-	    // It has a dirname, strip trailing slash
-	    dir = dir.substr(0, dir.length - 1);
-	  }
-	
-	  return root + dir;
-	};
-	
-	
-	exports.basename = function(path, ext) {
-	  var f = splitPath(path)[2];
-	  // TODO: make this comparison case-insensitive on windows?
-	  if (ext && f.substr(-1 * ext.length) === ext) {
-	    f = f.substr(0, f.length - ext.length);
-	  }
-	  return f;
-	};
-	
-	
-	exports.extname = function(path) {
-	  return splitPath(path)[3];
-	};
-	
-	function filter (xs, f) {
-	    if (xs.filter) return xs.filter(f);
-	    var res = [];
-	    for (var i = 0; i < xs.length; i++) {
-	        if (f(xs[i], i, xs)) res.push(xs[i]);
-	    }
-	    return res;
-	}
-	
-	// String.prototype.substr - negative index don't work in IE8
-	var substr = 'ab'.substr(-1) === 'b'
-	    ? function (str, start, len) { return str.substr(start, len) }
-	    : function (str, start, len) {
-	        if (start < 0) start = str.length + start;
-	        return str.substr(start, len);
-	    }
-	;
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
-
-/***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	// shim for using process in browser
-	
-	var process = module.exports = {};
-	
-	// cached from whatever global is present so that test runners that stub it
-	// don't break things.  But we need to wrap it in a try catch in case it is
-	// wrapped in strict mode code which doesn't define any globals.  It's inside a
-	// function because try/catches deoptimize in certain engines.
-	
-	var cachedSetTimeout;
-	var cachedClearTimeout;
-	
-	(function () {
-	  try {
-	    cachedSetTimeout = setTimeout;
-	  } catch (e) {
-	    cachedSetTimeout = function () {
-	      throw new Error('setTimeout is not defined');
-	    }
-	  }
-	  try {
-	    cachedClearTimeout = clearTimeout;
-	  } catch (e) {
-	    cachedClearTimeout = function () {
-	      throw new Error('clearTimeout is not defined');
-	    }
-	  }
-	} ())
-	var queue = [];
-	var draining = false;
-	var currentQueue;
-	var queueIndex = -1;
-	
-	function cleanUpNextTick() {
-	    if (!draining || !currentQueue) {
-	        return;
-	    }
-	    draining = false;
-	    if (currentQueue.length) {
-	        queue = currentQueue.concat(queue);
-	    } else {
-	        queueIndex = -1;
-	    }
-	    if (queue.length) {
-	        drainQueue();
-	    }
-	}
-	
-	function drainQueue() {
-	    if (draining) {
-	        return;
-	    }
-	    var timeout = cachedSetTimeout(cleanUpNextTick);
-	    draining = true;
-	
-	    var len = queue.length;
-	    while(len) {
-	        currentQueue = queue;
-	        queue = [];
-	        while (++queueIndex < len) {
-	            if (currentQueue) {
-	                currentQueue[queueIndex].run();
-	            }
-	        }
-	        queueIndex = -1;
-	        len = queue.length;
-	    }
-	    currentQueue = null;
-	    draining = false;
-	    cachedClearTimeout(timeout);
-	}
-	
-	process.nextTick = function (fun) {
-	    var args = new Array(arguments.length - 1);
-	    if (arguments.length > 1) {
-	        for (var i = 1; i < arguments.length; i++) {
-	            args[i - 1] = arguments[i];
-	        }
-	    }
-	    queue.push(new Item(fun, args));
-	    if (queue.length === 1 && !draining) {
-	        cachedSetTimeout(drainQueue, 0);
-	    }
-	};
-	
-	// v8 likes predictible objects
-	function Item(fun, array) {
-	    this.fun = fun;
-	    this.array = array;
-	}
-	Item.prototype.run = function () {
-	    this.fun.apply(null, this.array);
-	};
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-	process.version = ''; // empty string to avoid regexp issues
-	process.versions = {};
-	
-	function noop() {}
-	
-	process.on = noop;
-	process.addListener = noop;
-	process.once = noop;
-	process.off = noop;
-	process.removeListener = noop;
-	process.removeAllListeners = noop;
-	process.emit = noop;
-	
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	};
-	
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-	process.umask = function() { return 0; };
-
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./albums/albums.js": 9,
-		"./app/app.js": 15,
-		"./list/list.js": 19,
-		"./newAlbum/newAlbum.js": 23,
-		"./newImage/newImage.js": 27,
-		"./slideshow/slideshow.js": 31,
-		"./tile/tile.js": 35,
-		"./viewSelector/viewSelector.js": 39
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 8;
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _albums = __webpack_require__(10);
-	
-	var _albums2 = _interopRequireDefault(_albums);
-	
-	var _albums3 = __webpack_require__(11);
-	
-	var _albums4 = _interopRequireDefault(_albums3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _albums2.default,
-	  bindings: {
-	    display: '<',
-	    view: '<'
-	  },
-	  controller: controller
-	};
-	
-	
-	controller.inject = ['albumService', 'imageService', '$state'];
-	
-	function controller(albumService, imageService, $state) {
-	  var _this = this;
-	
-	  this.styles = _albums4.default;
-	  this.changeView = function () {
-	    $state.go($state.current.name, { view: _this.view });
-	  };
-	  albumService.get().then(function (albums) {
-	    return _this.albums = albums;
-	  });
-	
-	  this.getImages = function (album) {
-	    imageService.getImagesByAlbum(album).then(function (images) {
-	      return _this.images = images;
-	    }).catch(function (err) {
-	      return console.error(err);
-	    });
-	  };
-	
-	  imageService.get().then(function (images) {
-	    return _this.images = images;
-	  });
-	  albumService.get().then(function (albums) {
-	    return _this.albums = albums;
-	  });
-	
-	  // default view
-	  this.view = this.view || 'tile';
-	}
-
-/***/ },
-/* 10 */
-/***/ function(module, exports) {
-
-	module.exports = "<section class=album-header> <h3>Albums</h3> <ul> <li ng-repeat=\"album in $ctrl.albums\"> <a ui-sref-active=active ui-sref=\"albums.album({albumId: album._id, view: $ctrl.view, albums: $ctrl.albums})\">{{album.title}}</a> </li> </ul> <nav> Choose your display:&nbsp; <input id=list type=radio ng-model=$ctrl.view value=list ng-change=$ctrl.changeView()> <label for=list>List</label> <input id=tile type=radio ng-model=$ctrl.view value=tile ng-change=$ctrl.changeView()> <label for=tile>Tile</label> <input id=slideshow type=radio ng-model=$ctrl.view value=slideshow ng-change=$ctrl.changeView()> <label for=slideshow>Slideshow</label> </nav> <ui-view></ui-view> </section>";
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(12);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./albums.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./albums.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "._2FtdfR6H_0iXfbW8LY7-ra h3 {\n  margin: 0;\n  padding-top: 20px;\n  text-align: center; }\n\n._2FtdfR6H_0iXfbW8LY7-ra ul li {\n  display: inline-block;\n  text-align: center;\n  margin: 0 20px; }\n  ._2FtdfR6H_0iXfbW8LY7-ra ul li a {\n    text-decoration: none;\n    color: inherit; }\n  ._2FtdfR6H_0iXfbW8LY7-ra ul li a.active {\n    color: red; }\n", "", {"version":3,"sources":["/./src/app/src/components/albums/albums.scss"],"names":[],"mappings":"AAAA;EAGI,UAAU;EACV,kBAAkB;EAClB,mBAAmB,EAEpB;;AAPH;EAYM,sBAAsB;EACtB,mBAAmB;EACnB,eAAe,EAQhB;EAtBL;IAgBQ,sBAAsB;IACtB,eAAe,EAChB;EAlBP;IAoBQ,WAAW,EACZ","file":"albums.scss","sourcesContent":[":local(.album-header){\n\n  h3 {\n    margin: 0;\n    padding-top: 20px;\n    text-align: center;\n\n  }\n\n  ul {\n    \n    li {\n      display: inline-block;\n      text-align: center;\n      margin: 0 20px;\n      a {\n        text-decoration: none;\n        color: inherit;\n      }\n      a.active {\n        color: red;\n      }\n    }\n  }\n\n}\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-	exports.locals = {
-		"album-header": "_2FtdfR6H_0iXfbW8LY7-ra"
-	};
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-	
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-	
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0,
-		styleElementsInsertedAtTop = [];
-	
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-	
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-	
-		// By default, add <style> tags to the bottom of <head>.
-		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
-	
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-	
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-	
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-	
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-	
-	function insertStyleElement(options, styleElement) {
-		var head = getHeadElement();
-		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-		if (options.insertAt === "top") {
-			if(!lastStyleElementInsertedAtTop) {
-				head.insertBefore(styleElement, head.firstChild);
-			} else if(lastStyleElementInsertedAtTop.nextSibling) {
-				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-			} else {
-				head.appendChild(styleElement);
-			}
-			styleElementsInsertedAtTop.push(styleElement);
-		} else if (options.insertAt === "bottom") {
-			head.appendChild(styleElement);
-		} else {
-			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
-		}
-	}
-	
-	function removeStyleElement(styleElement) {
-		styleElement.parentNode.removeChild(styleElement);
-		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
-		if(idx >= 0) {
-			styleElementsInsertedAtTop.splice(idx, 1);
-		}
-	}
-	
-	function createStyleElement(options) {
-		var styleElement = document.createElement("style");
-		styleElement.type = "text/css";
-		insertStyleElement(options, styleElement);
-		return styleElement;
-	}
-	
-	function createLinkElement(options) {
-		var linkElement = document.createElement("link");
-		linkElement.rel = "stylesheet";
-		insertStyleElement(options, linkElement);
-		return linkElement;
-	}
-	
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-	
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement(options));
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement(options);
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement(options);
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				removeStyleElement(styleElement);
-			};
-		}
-	
-		update(obj);
-	
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-	
-	var replaceText = (function () {
-		var textStore = [];
-	
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-	
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-	
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-	
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-	
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-	
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-	
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var sourceMap = obj.sourceMap;
-	
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-	
-		var blob = new Blob([css], { type: "text/css" });
-	
-		var oldSrc = linkElement.href;
-	
-		linkElement.href = URL.createObjectURL(blob);
-	
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _app = __webpack_require__(16);
-	
-	var _app2 = _interopRequireDefault(_app);
-	
-	var _app3 = __webpack_require__(17);
-	
-	var _app4 = _interopRequireDefault(_app3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _app2.default,
-	  controllerAs: 'app',
-	  controller: function controller() {
-	    this.styles = _app4.default;
-	  }
-	};
-
-/***/ },
-/* 16 */
-/***/ function(module, exports) {
-
-	module.exports = "<main> <header> <h1>Image Gallery</h1> </header> <ui-view></ui-view> </main>";
-
-/***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(18);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./app.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./app.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "header {\n  background-color: lightsteelblue;\n  width: 100%;\n  height: 90px;\n  margin-top: 0; }\n  header h1 {\n    text-align: center;\n    margin: 0;\n    padding-top: 20px; }\n", "", {"version":3,"sources":["/./src/app/src/components/app/app.scss","/./src/app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAEA;EACE,iCCDgC;EDEhC,YAAY;EACZ,aAAa;EACb,cAAc,EAUf;EAdD;IAOI,mBAAmB;IACnB,UAAU;IACV,kBAAkB,EAEnB","file":"app.scss","sourcesContent":["@import '../../scss/includes/colors';\n\nheader {\n  background-color: $header-background;\n  width: 100%;\n  height: 90px;\n  margin-top: 0;\n\n  h1 {\n    text-align: center;\n    margin: 0;\n    padding-top: 20px;\n\n  }\n\n\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _list = __webpack_require__(20);
-	
-	var _list2 = _interopRequireDefault(_list);
-	
-	var _list3 = __webpack_require__(21);
-	
-	var _list4 = _interopRequireDefault(_list3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _list2.default,
-	  controllerAs: 'list',
-	  bindings: {
-	    data: '<',
-	    deleteImage: '&'
-	  },
-	  controller: function controller() {
-	    this.styles = _list4.default;
-	  }
-	};
-
-/***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	module.exports = "<section> <div ng-class=list.styles.div> <ul ng-class=list.styles.unordered> <li ng-repeat=\"image in list.data\" ng-class=list.styles.items> <a href={{image.url}}>{{image.title}}</a> <br>{{image.description}}<br><button ng-click=list.deleteImage({id:image._id})>delete</button> </li> </ul> </div> </section>";
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(22);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./list.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./list.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "._1RMuL80zUn1vgZETTAC8M5 {\n  width: 60%;\n  margin: 30px; }\n\n._3ll4GxQYGFdGbP2_pcbT77 {\n  list-style-type: none;\n  margin: 0;\n  padding: 0; }\n\n._2xY-M8YcSAKRi5QuCLz0D1 {\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc; }\n  ._2xY-M8YcSAKRi5QuCLz0D1:last-child {\n    border: none; }\n  ._2xY-M8YcSAKRi5QuCLz0D1 a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -moz-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -o-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -ms-transition: font-size 0.3s ease, background-color 0.3s ease;\n    transition: font-size 0.3s ease, background-color 0.3s ease; }\n  ._2xY-M8YcSAKRi5QuCLz0D1 a:hover {\n    font-size: 30px;\n    background: #f6f6f6; }\n", "", {"version":3,"sources":["/./src/app/src/components/list/list.scss"],"names":[],"mappings":"AAQA;EACE,WAAW;EACX,aAAa,EACd;;AAED;EACE,sBAAsB;EACtB,UAAU;EACV,WAAW,EACZ;;AAED;EACE,kDAAkD;EAClD,8BAA8B,EAiB/B;EAnBD;IAKI,aAAa,EACd;EANH;IASI,sBAAsB;IACtB,YAAY;IACZ,eAAe;IA7BjB,oEAAqE;IAClE,iEAAkE;IAChE,+DAAgE;IACjE,gEAAiE;IAC7D,4DAA6D,EA2BpE;EAbH;IAgBI,gBAAgB;IAChB,oBAAoB,EACrB","file":"list.scss","sourcesContent":["@mixin transition-effect($time) {\n  -webkit-transition: font-size $time ease, background-color $time ease;\n     -moz-transition: font-size $time ease, background-color $time ease;\n       -o-transition: font-size $time ease, background-color $time ease;\n      -ms-transition: font-size $time ease, background-color $time ease;\n          transition: font-size $time ease, background-color $time ease;\n}\n\n:local(.div) {\n  width: 60%;\n  margin: 30px;\n}\n\n:local(.unordered) {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n}\n\n:local(.items) {\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc;\n\n  &:last-child {\n    border: none;\n  }\n\n  a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    @include transition-effect(0.3s);\n  }\n\n  a:hover {\n    font-size: 30px;\n    background: #f6f6f6;\n  }\n}\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-	exports.locals = {
-		"div": "_1RMuL80zUn1vgZETTAC8M5",
-		"unordered": "_3ll4GxQYGFdGbP2_pcbT77",
-		"items": "_2xY-M8YcSAKRi5QuCLz0D1"
-	};
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _newAlbum = __webpack_require__(24);
-	
-	var _newAlbum2 = _interopRequireDefault(_newAlbum);
-	
-	var _newAlbum3 = __webpack_require__(25);
-	
-	var _newAlbum4 = _interopRequireDefault(_newAlbum3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _newAlbum2.default,
-	  controllerAs: 'newAlbum',
-	  bindings: {
-	    add: '&'
-	  },
-	  controller: function controller() {
-	    var _this = this;
-	
-	    this.styles = _newAlbum4.default;
-	    this.submit = function () {
-	      var album = _this.album;
-	      _this.add({ album: album });
-	      _this.album = {};
-	    };
-	  }
-	};
-
-/***/ },
-/* 24 */
-/***/ function(module, exports) {
-
-	module.exports = "<section> <h2 ng-class=newAlbum.styles.headline>Add a new Album</h2> <form name=form ng-submit=newAlbum.submit()> <input ng-model=newAlbum.album.title placeholder=title><br> <input ng-model=newAlbum.album.description placeholder=description><br> <button type=submit>Add Album</button> </form> </section>";
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(26);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newAlbum.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newAlbum.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"newAlbum.scss","sourceRoot":"webpack://"}]);
-	
-	// exports
-
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _newImage = __webpack_require__(28);
-	
-	var _newImage2 = _interopRequireDefault(_newImage);
-	
-	var _newImage3 = __webpack_require__(29);
-	
-	var _newImage4 = _interopRequireDefault(_newImage3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _newImage2.default,
-	  controllerAs: 'newImage',
-	  bindings: {
-	    add: '&'
-	  },
-	  controller: controller
-	};
-	
-	
-	controller.inject = ['albumService'];
-	
-	function controller(albumService) {
-	  var _this = this;
-	
-	  albumService.get().then(function (albums) {
-	    _this.albums = albums;
-	  });
-	  this.styles = _newImage4.default;
-	  this.submit = function () {
-	    var image = _this.image;
-	    _this.add({ image: image });
-	    _this.image = {};
-	  };
-	}
-
-/***/ },
-/* 28 */
-/***/ function(module, exports) {
-
-	module.exports = "<section> <h2 ng-class=newImage.styles.headline>Add a new Image</h2> <form name=form ng-submit=newImage.submit()> <input ng-model=newImage.image.title placeholder=title><br> <input ng-model=newImage.image.description placeholder=description><br> <input ng-model=newImage.image.url placeholder=url><br> <select ng-model=newImage.image.album> <option>-- Select an album --</option> <option ng-repeat=\"album in newImage.albums\" value={{album._id}}>{{album.title}}</option> </select> <button type=submit>Add Image</button> </form> </section>";
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(30);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newImage.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newImage.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"newImage.scss","sourceRoot":"webpack://"}]);
-	
-	// exports
-
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _slideshow = __webpack_require__(32);
-	
-	var _slideshow2 = _interopRequireDefault(_slideshow);
-	
-	var _slideshow3 = __webpack_require__(33);
-	
-	var _slideshow4 = _interopRequireDefault(_slideshow3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _slideshow2.default,
-	  controllerAs: 'slideshow',
-	  bindings: {
-	    data: '<'
-	  },
-	  controller: function controller() {
-	    this.index = 0;
-	    this.prev = function () {
-	      if (--this.index < 0) this.index = this.data.length - 1;
-	    };
-	    this.next = function () {
-	      if (++this.index > this.data.length - 1) this.index = 0;
-	    };
-	    this.styles = _slideshow4.default;
-	  }
-	};
-
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	module.exports = "<section id=slideshow-container> <p id=controls> <button ng-click=slideshow.prev()>Prev</button><button ng-click=slideshow.next()>Next</button> </p> <p id=slides> </p><h3>{{slideshow.data[slideshow.index].title}}</h3> <img src={{slideshow.data[slideshow.index].url}}><br> {{slideshow.data[slideshow.index].description}} <p></p> </section>";
-
-/***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(34);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./slideshow.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./slideshow.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "img {\n  max-width: 500px; }\n\n#controls {\n  margin: 0 auto; }\n\n#slideshow-container {\n  width: 92%;\n  padding: 0 20 0 20;\n  margin: 0 auto; }\n", "", {"version":3,"sources":["/./src/app/src/components/slideshow/slideshow.scss"],"names":[],"mappings":"AAIA;EACE,iBAAiB,EAClB;;AAED;EACE,eAAe,EAEhB;;AAED;EACE,WAAW;EACX,mBAAmB;EACnB,eAAe,EAChB","file":"slideshow.scss","sourcesContent":["// :local(.headline){\n//   color: green;\n// }\n\nimg {\n  max-width: 500px;\n}\n\n#controls {\n  margin: 0 auto;\n\n}\n\n#slideshow-container {\n  width: 92%;\n  padding: 0 20 0 20;\n  margin: 0 auto;\n}\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _tile = __webpack_require__(36);
-	
-	var _tile2 = _interopRequireDefault(_tile);
-	
-	var _tile3 = __webpack_require__(37);
-	
-	var _tile4 = _interopRequireDefault(_tile3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _tile2.default,
-	  controllerAs: 'tile',
-	  bindings: {
-	    data: '<'
-	  },
-	  controller: function controller() {
-	    this.styles = _tile4.default;
-	  }
-	};
-
-/***/ },
-/* 36 */
-/***/ function(module, exports) {
-
-	module.exports = "<section> <div ng-class=tile.styles.div> <section ng-class=tile.styles.tile ng-repeat=\"image in tile.data\"> <h4>{{image.title}}</h4> <img ng-class=tile.styles.image title={{image.description}} src={{image.url}}> </section> </div> </section>";
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(38);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "section {\n  background-color: #a9bfdb; }\n\n._3Z9723Z-u3TyVc5DrtY4y8 {\n  height: 80%;\n  width: 80%;\n  display: block;\n  margin: 0 auto; }\n\n._1PzfbPn0h_F2FO1IfolxEV {\n  list-style: none; }\n\n._2KyHjiWk8wm9-vDLYGthQ {\n  height: 220px;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow: 3px 3px 8px black;\n  border: 1px solid darkgray;\n  background-color: white; }\n\n._1RgYnP1XMyv_tNjt-uj1fu {\n  background-color: white;\n  width: 92%;\n  min-height: 264px;\n  height: auto;\n  padding: 8px;\n  display: flex;\n  flex-flow: row wrap;\n  border: 1px solid darkgray;\n  margin: 0 auto; }\n", "", {"version":3,"sources":["/./src/app/src/components/tile/tile.scss","/./src/app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAOA;EACE,0BCLuB,EDMxB;;AAED;EACE,YARc;EASd,WATc;EAUd,eAAc;EACd,eAAc,EACf;;AAED;EACE,iBAAiB,EAClB;;AAED;EACE,cAlBiB;EAmBjB,aAAa;EACb,iBAAiB;EACjB,aAAa;EACb,cAAc;EACd,8BAA6B;EA1B7B,2BAA2B;EA8B3B,wBAAwB,EACzB;;AAED;EACE,wBAAwB;EACxB,WAAU;EACV,kBAAwB;EACxB,aAAY;EACZ,aAAY;EACZ,cAAc;EACd,oBAAoB;EAxCpB,2BAA2B;EA0C3B,eAAe,EAChB","file":"tile.scss","sourcesContent":["@import '../../scss/includes/colors';\n@mixin border {\n  border: 1px solid darkgray;\n}\n$thumb-size: 80%;\n$tile-height: 220px;\n\nsection {\n  background-color: $image-background;\n}\n\n:local(.image) {\n  height: $thumb-size;\n  width: $thumb-size;\n  display:block;\n  margin:0 auto;\n}\n\n:local(.list) {\n  list-style: none;\n}\n\n:local(.tile) {\n  height: $tile-height;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow:3px 3px 8px black;\n  @include border;\n\n\n  background-color: white;\n}\n\n:local(.div){\n  background-color: white;\n  width:92%;\n  min-height: $tile-height * 1.2;\n  height:auto;\n  padding:8px;\n  display: flex;\n  flex-flow: row wrap;\n  @include border;\n  margin: 0 auto;\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-	exports.locals = {
-		"image": "_3Z9723Z-u3TyVc5DrtY4y8",
-		"list": "_1PzfbPn0h_F2FO1IfolxEV",
-		"tile": "_2KyHjiWk8wm9-vDLYGthQ",
-		"div": "_1RgYnP1XMyv_tNjt-uj1fu"
-	};
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _viewSelector = __webpack_require__(40);
-	
-	var _viewSelector2 = _interopRequireDefault(_viewSelector);
-	
-	var _viewSelector3 = __webpack_require__(41);
-	
-	var _viewSelector4 = _interopRequireDefault(_viewSelector3);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = {
-	  template: _viewSelector2.default,
-	  controllerAs: 'viewSelector',
-	  bindings: {
-	    view: '=',
-	    images: '=',
-	    albums: '='
-	  },
-	  controller: controller
-	};
-	
-	
-	controller.inject = ['imageService', 'albumService'];
-	
-	function controller(imageService, albumService) {
-	  var _this = this;
-	
-	  this.uiOnParamsChanged = function (params) {
-	    _this.view = params.view;
-	  };
-	  this.styles = _viewSelector4.default;
-	  this.deleteImage = function (id) {
-	    imageService.delete(id).then(function () {
-	      var index = _this.images.findIndex(function (image) {
-	        return image._id === id;
-	      });
-	      if (index !== -1) _this.images.splice(index, 1);
-	    }).catch(function (err) {
-	      return console.error(err);
-	    });
-	  };
-	  this.addImage = function (image) {
-	    var albumId = _this.images[0].album;
-	    imageService.add(image).then(function (image) {
-	      if (image.album === albumId) _this.images.push(image);
-	    }).catch(function (err) {
-	      return console.error(err);
-	    });
-	  };
-	  this.addAlbum = function (album) {
-	    albumService.add(album).then(function (album) {
-	      return _this.albums.push(album);
-	    }).catch(function (err) {
-	      return console.error(err);
-	    });;
-	  };
-	  this.deleteImage = function (id) {
-	    var albumId = _this.images[0].album;
-	    imageService.delete(id).then(function () {
-	      var index = _this.images.findIndex(function (image) {
-	        return image._id === id;
-	      });
-	      if (index !== -1) _this.images.splice(index, 1);
-	      if (_this.images.length === 0) albumService.delete(albumId);
-	    }).catch(function (err) {
-	      return console.error(err);
-	    });
-	    // imageService.getImagesByAlbum(this.albumId).then(images => this.images = images);
-	  };
-	
-	  // this.view = 'tile';
-	}
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-	module.exports = "<section> <list ng-if=\"(viewSelector.view === 'list')\" data=viewSelector.images delete-image=viewSelector.deleteImage(id)></list> <tile ng-if=\"(viewSelector.view === 'tile')\" data=viewSelector.images></tile> <slideshow ng-if=\"(viewSelector.view === 'slideshow')\" data=viewSelector.images></slideshow> <hr> <new-image add=viewSelector.addImage(image)></new-image> <new-album add=viewSelector.addAlbum(album)></new-album> </section>";
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-	
-	// load the styles
-	var content = __webpack_require__(42);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./viewSelector.scss", function() {
-				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./viewSelector.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(13)();
-	// imports
-	
-	
-	// module
-	exports.push([module.id, "nav {\n  display: flex;\n  height: 35px;\n  padding-top: 20px;\n  background: lightsteelblue; }\n  nav #selector {\n    width: 160px; }\n\n#images {\n  padding-top: 15px; }\n", "", {"version":3,"sources":["/./src/app/src/components/viewSelector/viewSelector.scss","/./src/app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAEA;EACE,cAAc;EACd,aAAa;EACb,kBAAkB;EAClB,2BCJgC,EDSjC;EATD;IAOI,aAAa,EACd;;AAGH;EACE,kBAAkB,EACnB","file":"viewSelector.scss","sourcesContent":["@import '../../scss/includes/colors';\n\nnav {\n  display: flex;\n  height: 35px;\n  padding-top: 20px;\n  background: $header-background;\n\n  #selector {\n    width: 160px;\n  }\n}\n\n#images {\n  padding-top: 15px;\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
-	
-	// exports
-
-
-/***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	
-	var _angular = __webpack_require__(1);
-	
-	var _angular2 = _interopRequireDefault(_angular);
-	
-	var _camelcase = __webpack_require__(5);
-	
-	var _camelcase2 = _interopRequireDefault(_camelcase);
-	
-	var _path = __webpack_require__(6);
-	
-	var _path2 = _interopRequireDefault(_path);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var reqContext = __webpack_require__(44);
-	
-	var services = _angular2.default.module('services', []);
-	
-	reqContext.keys().forEach(function (key) {
-		var name = (0, _camelcase2.default)(_path2.default.basename(key, '.js'));
-		services.factory(name, reqContext(key).default);
-	});
-	
-	exports.default = services.name;
-
-/***/ },
-/* 44 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var map = {
-		"./albumService.js": 45,
-		"./imageService.js": 46
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
-	webpackContext.id = 44;
-
-
-/***/ },
-/* 45 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = albumService;
-	albumService.$inject = ['$http', 'apiUrl'];
-	
-	function albumService($http, apiUrl) {
-	
-	  return {
-	    get: function get() {
-	      return $http.get(apiUrl + '/album').then(function (r) {
-	        return r.data;
-	      });
-	    },
-	    add: function add(album) {
-	      return $http.post(apiUrl + '/album', album).then(function (r) {
-	        return r.data;
-	      });
-	    },
-	    delete: function _delete(albumId) {
-	      return $http.delete(apiUrl + '/album/' + albumId).then(function (r) {
-	        return r.data;
-	      });
-	    }
-	  };
-	}
-
-/***/ },
-/* 46 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = imageService;
-	imageService.$inject = ['$http', 'apiUrl'];
-	
-	function imageService($http, apiUrl) {
-	
-	  return {
-	    get: function get() {
-	      return $http.get(apiUrl + '/image').then(function (r) {
-	        return r.data;
-	      });
-	    },
-	    getImage: function getImage(imageId) {
-	      return $http.get(apiUrl + '/image/' + imageId).then(function (r) {
-	        return r.data;
-	      });
-	    },
-	    getImagesByAlbum: function getImagesByAlbum(albumId) {
-	      return $http.get(apiUrl + '/album/' + albumId).then(function (r) {
-	        return r.data;
-	      });
-	    },
-	    add: function add(image) {
-	      return $http.post(apiUrl + '/image', image).then(function (r) {
-	        return r.data;
-	      });
-	    },
-	    delete: function _delete(imageId) {
-	      return $http.delete(apiUrl + '/image/' + imageId).then(function (r) {
-	        return r.data;
-	      });
-	    }
-	  };
-	}
-
-/***/ },
-/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*!
@@ -41212,16 +39603,3238 @@
 	//# sourceMappingURL=angular-ui-router.js.map
 
 /***/ },
-/* 48 */
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _angular = __webpack_require__(1);
+	
+	var _angular2 = _interopRequireDefault(_angular);
+	
+	var _camelcase = __webpack_require__(6);
+	
+	var _camelcase2 = _interopRequireDefault(_camelcase);
+	
+	var _path = __webpack_require__(7);
+	
+	var _path2 = _interopRequireDefault(_path);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var reqContext = __webpack_require__(9);
+	
+	var components = _angular2.default.module('components', []);
+	
+	reqContext.keys().forEach(function (key) {
+	    var name = (0, _camelcase2.default)(_path2.default.basename(key, '.js'));
+	    components.component(name, reqContext(key).default);
+	});
+	
+	exports.default = components.name;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	'use strict';
+	module.exports = function () {
+		var str = [].map.call(arguments, function (str) {
+			return str.trim();
+		}).filter(function (str) {
+			return str.length;
+		}).join('-');
+	
+		if (!str.length) {
+			return '';
+		}
+	
+		if (str.length === 1 || !(/[_.\- ]+/).test(str) ) {
+			if (str[0] === str[0].toLowerCase() && str.slice(1) !== str.slice(1).toLowerCase()) {
+				return str;
+			}
+	
+			return str.toLowerCase();
+		}
+	
+		return str
+		.replace(/^[_.\- ]+/, '')
+		.toLowerCase()
+		.replace(/[_.\- ]+(\w|$)/g, function (m, p1) {
+			return p1.toUpperCase();
+		});
+	};
+
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
+	//
+	// Permission is hereby granted, free of charge, to any person obtaining a
+	// copy of this software and associated documentation files (the
+	// "Software"), to deal in the Software without restriction, including
+	// without limitation the rights to use, copy, modify, merge, publish,
+	// distribute, sublicense, and/or sell copies of the Software, and to permit
+	// persons to whom the Software is furnished to do so, subject to the
+	// following conditions:
+	//
+	// The above copyright notice and this permission notice shall be included
+	// in all copies or substantial portions of the Software.
+	//
+	// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+	// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+	// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+	// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+	// USE OR OTHER DEALINGS IN THE SOFTWARE.
+	
+	// resolves . and .. elements in a path array with directory names there
+	// must be no slashes, empty elements, or device names (c:\) in the array
+	// (so also no leading and trailing slashes - it does not distinguish
+	// relative and absolute paths)
+	function normalizeArray(parts, allowAboveRoot) {
+	  // if the path tries to go above the root, `up` ends up > 0
+	  var up = 0;
+	  for (var i = parts.length - 1; i >= 0; i--) {
+	    var last = parts[i];
+	    if (last === '.') {
+	      parts.splice(i, 1);
+	    } else if (last === '..') {
+	      parts.splice(i, 1);
+	      up++;
+	    } else if (up) {
+	      parts.splice(i, 1);
+	      up--;
+	    }
+	  }
+	
+	  // if the path is allowed to go above the root, restore leading ..s
+	  if (allowAboveRoot) {
+	    for (; up--; up) {
+	      parts.unshift('..');
+	    }
+	  }
+	
+	  return parts;
+	}
+	
+	// Split a filename into [root, dir, basename, ext], unix version
+	// 'root' is just a slash, or nothing.
+	var splitPathRe =
+	    /^(\/?|)([\s\S]*?)((?:\.{1,2}|[^\/]+?|)(\.[^.\/]*|))(?:[\/]*)$/;
+	var splitPath = function(filename) {
+	  return splitPathRe.exec(filename).slice(1);
+	};
+	
+	// path.resolve([from ...], to)
+	// posix version
+	exports.resolve = function() {
+	  var resolvedPath = '',
+	      resolvedAbsolute = false;
+	
+	  for (var i = arguments.length - 1; i >= -1 && !resolvedAbsolute; i--) {
+	    var path = (i >= 0) ? arguments[i] : process.cwd();
+	
+	    // Skip empty and invalid entries
+	    if (typeof path !== 'string') {
+	      throw new TypeError('Arguments to path.resolve must be strings');
+	    } else if (!path) {
+	      continue;
+	    }
+	
+	    resolvedPath = path + '/' + resolvedPath;
+	    resolvedAbsolute = path.charAt(0) === '/';
+	  }
+	
+	  // At this point the path should be resolved to a full absolute path, but
+	  // handle relative paths to be safe (might happen when process.cwd() fails)
+	
+	  // Normalize the path
+	  resolvedPath = normalizeArray(filter(resolvedPath.split('/'), function(p) {
+	    return !!p;
+	  }), !resolvedAbsolute).join('/');
+	
+	  return ((resolvedAbsolute ? '/' : '') + resolvedPath) || '.';
+	};
+	
+	// path.normalize(path)
+	// posix version
+	exports.normalize = function(path) {
+	  var isAbsolute = exports.isAbsolute(path),
+	      trailingSlash = substr(path, -1) === '/';
+	
+	  // Normalize the path
+	  path = normalizeArray(filter(path.split('/'), function(p) {
+	    return !!p;
+	  }), !isAbsolute).join('/');
+	
+	  if (!path && !isAbsolute) {
+	    path = '.';
+	  }
+	  if (path && trailingSlash) {
+	    path += '/';
+	  }
+	
+	  return (isAbsolute ? '/' : '') + path;
+	};
+	
+	// posix version
+	exports.isAbsolute = function(path) {
+	  return path.charAt(0) === '/';
+	};
+	
+	// posix version
+	exports.join = function() {
+	  var paths = Array.prototype.slice.call(arguments, 0);
+	  return exports.normalize(filter(paths, function(p, index) {
+	    if (typeof p !== 'string') {
+	      throw new TypeError('Arguments to path.join must be strings');
+	    }
+	    return p;
+	  }).join('/'));
+	};
+	
+	
+	// path.relative(from, to)
+	// posix version
+	exports.relative = function(from, to) {
+	  from = exports.resolve(from).substr(1);
+	  to = exports.resolve(to).substr(1);
+	
+	  function trim(arr) {
+	    var start = 0;
+	    for (; start < arr.length; start++) {
+	      if (arr[start] !== '') break;
+	    }
+	
+	    var end = arr.length - 1;
+	    for (; end >= 0; end--) {
+	      if (arr[end] !== '') break;
+	    }
+	
+	    if (start > end) return [];
+	    return arr.slice(start, end - start + 1);
+	  }
+	
+	  var fromParts = trim(from.split('/'));
+	  var toParts = trim(to.split('/'));
+	
+	  var length = Math.min(fromParts.length, toParts.length);
+	  var samePartsLength = length;
+	  for (var i = 0; i < length; i++) {
+	    if (fromParts[i] !== toParts[i]) {
+	      samePartsLength = i;
+	      break;
+	    }
+	  }
+	
+	  var outputParts = [];
+	  for (var i = samePartsLength; i < fromParts.length; i++) {
+	    outputParts.push('..');
+	  }
+	
+	  outputParts = outputParts.concat(toParts.slice(samePartsLength));
+	
+	  return outputParts.join('/');
+	};
+	
+	exports.sep = '/';
+	exports.delimiter = ':';
+	
+	exports.dirname = function(path) {
+	  var result = splitPath(path),
+	      root = result[0],
+	      dir = result[1];
+	
+	  if (!root && !dir) {
+	    // No dirname whatsoever
+	    return '.';
+	  }
+	
+	  if (dir) {
+	    // It has a dirname, strip trailing slash
+	    dir = dir.substr(0, dir.length - 1);
+	  }
+	
+	  return root + dir;
+	};
+	
+	
+	exports.basename = function(path, ext) {
+	  var f = splitPath(path)[2];
+	  // TODO: make this comparison case-insensitive on windows?
+	  if (ext && f.substr(-1 * ext.length) === ext) {
+	    f = f.substr(0, f.length - ext.length);
+	  }
+	  return f;
+	};
+	
+	
+	exports.extname = function(path) {
+	  return splitPath(path)[3];
+	};
+	
+	function filter (xs, f) {
+	    if (xs.filter) return xs.filter(f);
+	    var res = [];
+	    for (var i = 0; i < xs.length; i++) {
+	        if (f(xs[i], i, xs)) res.push(xs[i]);
+	    }
+	    return res;
+	}
+	
+	// String.prototype.substr - negative index don't work in IE8
+	var substr = 'ab'.substr(-1) === 'b'
+	    ? function (str, start, len) { return str.substr(start, len) }
+	    : function (str, start, len) {
+	        if (start < 0) start = str.length + start;
+	        return str.substr(start, len);
+	    }
+	;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	// shim for using process in browser
+	
+	var process = module.exports = {};
+	
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+	
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+	
+	(function () {
+	  try {
+	    cachedSetTimeout = setTimeout;
+	  } catch (e) {
+	    cachedSetTimeout = function () {
+	      throw new Error('setTimeout is not defined');
+	    }
+	  }
+	  try {
+	    cachedClearTimeout = clearTimeout;
+	  } catch (e) {
+	    cachedClearTimeout = function () {
+	      throw new Error('clearTimeout is not defined');
+	    }
+	  }
+	} ())
+	var queue = [];
+	var draining = false;
+	var currentQueue;
+	var queueIndex = -1;
+	
+	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
+	    draining = false;
+	    if (currentQueue.length) {
+	        queue = currentQueue.concat(queue);
+	    } else {
+	        queueIndex = -1;
+	    }
+	    if (queue.length) {
+	        drainQueue();
+	    }
+	}
+	
+	function drainQueue() {
+	    if (draining) {
+	        return;
+	    }
+	    var timeout = cachedSetTimeout(cleanUpNextTick);
+	    draining = true;
+	
+	    var len = queue.length;
+	    while(len) {
+	        currentQueue = queue;
+	        queue = [];
+	        while (++queueIndex < len) {
+	            if (currentQueue) {
+	                currentQueue[queueIndex].run();
+	            }
+	        }
+	        queueIndex = -1;
+	        len = queue.length;
+	    }
+	    currentQueue = null;
+	    draining = false;
+	    cachedClearTimeout(timeout);
+	}
+	
+	process.nextTick = function (fun) {
+	    var args = new Array(arguments.length - 1);
+	    if (arguments.length > 1) {
+	        for (var i = 1; i < arguments.length; i++) {
+	            args[i - 1] = arguments[i];
+	        }
+	    }
+	    queue.push(new Item(fun, args));
+	    if (queue.length === 1 && !draining) {
+	        cachedSetTimeout(drainQueue, 0);
+	    }
+	};
+	
+	// v8 likes predictible objects
+	function Item(fun, array) {
+	    this.fun = fun;
+	    this.array = array;
+	}
+	Item.prototype.run = function () {
+	    this.fun.apply(null, this.array);
+	};
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+	process.version = ''; // empty string to avoid regexp issues
+	process.versions = {};
+	
+	function noop() {}
+	
+	process.on = noop;
+	process.addListener = noop;
+	process.once = noop;
+	process.off = noop;
+	process.removeListener = noop;
+	process.removeAllListeners = noop;
+	process.emit = noop;
+	
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	};
+	
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+	process.umask = function() { return 0; };
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./albums/albums.js": 10,
+		"./app/app.js": 16,
+		"./list/list.js": 20,
+		"./newAlbum/newAlbum.js": 24,
+		"./newImage/newImage.js": 28,
+		"./signin/signin.js": 32,
+		"./signup/signup.js": 36,
+		"./slideshow/slideshow.js": 40,
+		"./tile/tile.js": 44,
+		"./userAuth/userAuth.js": 48,
+		"./viewSelector/viewSelector.js": 50
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 9;
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _albums = __webpack_require__(11);
+	
+	var _albums2 = _interopRequireDefault(_albums);
+	
+	var _albums3 = __webpack_require__(12);
+	
+	var _albums4 = _interopRequireDefault(_albums3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _albums2.default,
+	  controllerAs: 'albums',
+	  bindings: {
+	    display: '<',
+	    view: '<'
+	  },
+	
+	  controller: controller
+	};
+	
+	
+	controller.inject = ['albumService', 'imageService', '$state', 'userService', 'ngDialog'];
+	
+	function controller(albumService, imageService, $state, userService, ngDialog) {
+	  var _this = this;
+	
+	  this.styles = _albums4.default;
+	  this.logout = function () {
+	    return userService.logout();
+	  };
+	  imageService.get().then(function (images) {
+	    return _this.images = images;
+	  });
+	  albumService.get().then(function (albums) {
+	    return _this.albums = albums;
+	  });
+	
+	  // default view
+	  this.view = this.view || 'tile';
+	
+	  this.changeView = function () {
+	    $state.go($state.current.name, { view: _this.view });
+	  };
+	
+	  this.addAlbum = function (album) {
+	    albumService.add(album).then(function (album) {
+	      return _this.albums.push(album);
+	    }).catch(function (err) {
+	      return console.error(err);
+	    });;
+	  };
+	
+	  this.newAlbum = function (e) {
+	    e.preventDefault();
+	    var dialog = ngDialog.open({
+	      template: '<new-album add="addAlbum(album)"></new-album>',
+	      plain: true,
+	      controller: ['$scope', function ($scope) {
+	        $scope.addAlbum = function (album) {
+	          dialog.close();
+	          _this.addAlbum(album);
+	        };
+	      }]
+	    });
+	  };
+	
+	  this.newImage = function (e) {
+	    e.preventDefault();
+	    var dialog = ngDialog.open({
+	      template: '<new-image albums="albums" add="addImage(image)"></new-image>',
+	      plain: true,
+	      controller: ['$scope', function ($scope) {
+	        console.log('scope: ', $scope);
+	        $scope.albums = _this.albums;
+	        $scope.addImage = function (image) {
+	          dialog.close();
+	          _this.addImage(image);
+	        };
+	      }]
+	    });
+	  };
+	}
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <div ng-class=albums.styles.header> <h3>Albums</h3> <a class=logout ui-sref=home ng-click=albums.logout()>Logout</a> <ul> <li ng-repeat=\"album in albums.albums\"> <a ui-sref-active=active ui-sref=\"albums.album({albumId: album._id, view: albums.view, albums: albums.albums, image: albums.image})\">{{album.title}}</a> </li> <li><a href=# ng-click=albums.newAlbum($event)>New Album</a></li> <li><a href=# ng-click=albums.newImage($event)>New Image</a></li> </ul> <nav> Choose your display:&nbsp; <input id=list type=radio ng-model=albums.view value=list ng-change=albums.changeView()> <label for=list>List</label> <input id=tile type=radio ng-model=albums.view value=tile ng-change=albums.changeView()> <label for=tile>Tile</label> <input id=slideshow type=radio ng-model=albums.view value=slideshow ng-change=albums.changeView()> <label for=slideshow>Slideshow</label> </nav> </div> <ui-view></ui-view> </section>";
+
+/***/ },
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(49);
+	var content = __webpack_require__(13);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./albums.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./albums.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".wOp64K60jgY_3LtrWHPG {\n  text-align: center; }\n  .wOp64K60jgY_3LtrWHPG h3 {\n    margin: 0;\n    padding-top: 20px; }\n  .wOp64K60jgY_3LtrWHPG .logout {\n    text-align: right !important; }\n  .wOp64K60jgY_3LtrWHPG ul li {\n    display: inline-block;\n    margin: 20px 20px;\n    padding: 10px; }\n    .wOp64K60jgY_3LtrWHPG ul li a {\n      text-decoration: none;\n      color: inherit; }\n    .wOp64K60jgY_3LtrWHPG ul li a.active {\n      color: red; }\n", "", {"version":3,"sources":["/./src/app/src/components/albums/albums.scss"],"names":[],"mappings":"AAAA;EACE,mBAAmB,EAkCpB;EAnCD;IAKI,UAAU;IACV,kBAAkB,EAEnB;EARH;IAWI,6BAA6B,EAC9B;EAZH;IAiBM,sBAAsB;IAEtB,kBAAkB;IAClB,cAAc,EAYf;IAhCL;MAwBQ,sBAAsB;MACtB,eAAe,EAChB;IA1BP;MA6BQ,WAAW,EAEZ","file":"albums.scss","sourcesContent":[":local(.header) {\n  text-align: center;\n\n  h3 {\n    // text-align: center;\n    margin: 0;\n    padding-top: 20px;\n\n  }\n\n  .logout {\n    text-align: right !important;\n  }\n\n  ul {\n\n    li {\n      display: inline-block;\n      // text-align: center;\n      margin: 20px 20px;\n      padding: 10px;\n\n\n      a {\n        text-decoration: none;\n        color: inherit;\n      }\n\n      a.active {\n        color: red;\n\n      }\n    }\n  }\n\n}\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+	exports.locals = {
+		"header": "wOp64K60jgY_3LtrWHPG"
+	};
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+	
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+	
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0,
+		styleElementsInsertedAtTop = [];
+	
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+	
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+	
+		// By default, add <style> tags to the bottom of <head>.
+		if (typeof options.insertAt === "undefined") options.insertAt = "bottom";
+	
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+	
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+	
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+	
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+	
+	function insertStyleElement(options, styleElement) {
+		var head = getHeadElement();
+		var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
+		if (options.insertAt === "top") {
+			if(!lastStyleElementInsertedAtTop) {
+				head.insertBefore(styleElement, head.firstChild);
+			} else if(lastStyleElementInsertedAtTop.nextSibling) {
+				head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
+			} else {
+				head.appendChild(styleElement);
+			}
+			styleElementsInsertedAtTop.push(styleElement);
+		} else if (options.insertAt === "bottom") {
+			head.appendChild(styleElement);
+		} else {
+			throw new Error("Invalid value for parameter 'insertAt'. Must be 'top' or 'bottom'.");
+		}
+	}
+	
+	function removeStyleElement(styleElement) {
+		styleElement.parentNode.removeChild(styleElement);
+		var idx = styleElementsInsertedAtTop.indexOf(styleElement);
+		if(idx >= 0) {
+			styleElementsInsertedAtTop.splice(idx, 1);
+		}
+	}
+	
+	function createStyleElement(options) {
+		var styleElement = document.createElement("style");
+		styleElement.type = "text/css";
+		insertStyleElement(options, styleElement);
+		return styleElement;
+	}
+	
+	function createLinkElement(options) {
+		var linkElement = document.createElement("link");
+		linkElement.rel = "stylesheet";
+		insertStyleElement(options, linkElement);
+		return linkElement;
+	}
+	
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+	
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement(options));
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement(options);
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement(options);
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				removeStyleElement(styleElement);
+			};
+		}
+	
+		update(obj);
+	
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+	
+	var replaceText = (function () {
+		var textStore = [];
+	
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+	
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+	
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+	
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+	
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+	
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+	
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var sourceMap = obj.sourceMap;
+	
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+	
+		var blob = new Blob([css], { type: "text/css" });
+	
+		var oldSrc = linkElement.href;
+	
+		linkElement.href = URL.createObjectURL(blob);
+	
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _app = __webpack_require__(17);
+	
+	var _app2 = _interopRequireDefault(_app);
+	
+	var _app3 = __webpack_require__(18);
+	
+	var _app4 = _interopRequireDefault(_app3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _app2.default,
+	  controllerAs: 'app',
+	  controller: function controller() {
+	    this.styles = _app4.default;
+	  }
+	};
+
+/***/ },
+/* 17 */
+/***/ function(module, exports) {
+
+	module.exports = "<main> <header> <h1>Image Gallery</h1> </header> <ui-view></ui-view> </main>";
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(19);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./app.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./app.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "header {\n  background-color: lightsteelblue;\n  width: 100%;\n  height: 90px;\n  margin-top: 0; }\n  header h1 {\n    text-align: center;\n    margin: 0;\n    padding-top: 20px; }\n", "", {"version":3,"sources":["/./src/app/src/components/app/app.scss","/./src/app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAEA;EACE,iCCDgC;EDEhC,YAAY;EACZ,aAAa;EACb,cAAc,EAUf;EAdD;IAOI,mBAAmB;IACnB,UAAU;IACV,kBAAkB,EAEnB","file":"app.scss","sourcesContent":["@import 'colors';\n\nheader {\n  background-color: $header-background;\n  width: 100%;\n  height: 90px;\n  margin-top: 0;\n\n  h1 {\n    text-align: center;\n    margin: 0;\n    padding-top: 20px;\n\n  }\n\n\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _list = __webpack_require__(21);
+	
+	var _list2 = _interopRequireDefault(_list);
+	
+	var _list3 = __webpack_require__(22);
+	
+	var _list4 = _interopRequireDefault(_list3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _list2.default,
+	  controllerAs: 'list',
+	  bindings: {
+	    data: '<',
+	    deleteImage: '&'
+	  },
+	  controller: function controller() {
+	    this.styles = _list4.default;
+	  }
+	};
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <div ng-class=list.styles.div> <ul ng-class=list.styles.unordered> <li ng-repeat=\"image in list.data\" ng-class=list.styles.items> <a href={{image.url}}>{{image.title}}</a> <br>{{image.description}}<br><button ng-click=list.deleteImage({id:image._id})>delete</button> </li> </ul> </div> </section>";
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(23);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./list.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./list.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "._1RMuL80zUn1vgZETTAC8M5 {\n  width: 60%;\n  margin: 30px; }\n\n._3ll4GxQYGFdGbP2_pcbT77 {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n  text-align: left; }\n\n._2xY-M8YcSAKRi5QuCLz0D1 {\n  display: list-item;\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc; }\n  ._2xY-M8YcSAKRi5QuCLz0D1:last-child {\n    border: none; }\n  ._2xY-M8YcSAKRi5QuCLz0D1 a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -moz-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -o-transition: font-size 0.3s ease, background-color 0.3s ease;\n    -ms-transition: font-size 0.3s ease, background-color 0.3s ease;\n    transition: font-size 0.3s ease, background-color 0.3s ease; }\n  ._2xY-M8YcSAKRi5QuCLz0D1 a:hover {\n    font-size: 30px;\n    background: #f6f6f6; }\n", "", {"version":3,"sources":["/./src/app/src/components/list/list.scss"],"names":[],"mappings":"AAQA;EACE,WAAW;EACX,aAAa,EACd;;AAED;EACE,sBAAsB;EACtB,UAAU;EACV,WAAW;EACX,iBAAiB,EAClB;;AAED;EACE,mBAAmB;EACnB,kDAAkD;EAClD,8BAA8B,EAiB/B;EApBD;IAMI,aAAa,EACd;EAPH;IAUI,sBAAsB;IACtB,YAAY;IACZ,eAAe;IA/BjB,oEAAqE;IAClE,iEAAkE;IAChE,+DAAgE;IACjE,gEAAiE;IAC7D,4DAA6D,EA6BpE;EAdH;IAiBI,gBAAgB;IAChB,oBAAoB,EACrB","file":"list.scss","sourcesContent":["@mixin transition-effect($time) {\n  -webkit-transition: font-size $time ease, background-color $time ease;\n     -moz-transition: font-size $time ease, background-color $time ease;\n       -o-transition: font-size $time ease, background-color $time ease;\n      -ms-transition: font-size $time ease, background-color $time ease;\n          transition: font-size $time ease, background-color $time ease;\n}\n\n:local(.div) {\n  width: 60%;\n  margin: 30px;\n}\n\n:local(.unordered) {\n  list-style-type: none;\n  margin: 0;\n  padding: 0;\n  text-align: left;\n}\n\n:local(.items) {\n  display: list-item;\n  font: 200 20px/1.5 Helvetica, Verdana, sans-serif;\n  border-bottom: 1px solid #ccc;\n\n  &:last-child {\n    border: none;\n  }\n\n  a {\n    text-decoration: none;\n    color: #000;\n    display: block;\n    @include transition-effect(0.3s);\n  }\n\n  a:hover {\n    font-size: 30px;\n    background: #f6f6f6;\n  }\n}\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+	exports.locals = {
+		"div": "_1RMuL80zUn1vgZETTAC8M5",
+		"unordered": "_3ll4GxQYGFdGbP2_pcbT77",
+		"items": "_2xY-M8YcSAKRi5QuCLz0D1"
+	};
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _newAlbum = __webpack_require__(25);
+	
+	var _newAlbum2 = _interopRequireDefault(_newAlbum);
+	
+	var _newAlbum3 = __webpack_require__(26);
+	
+	var _newAlbum4 = _interopRequireDefault(_newAlbum3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _newAlbum2.default,
+	  controllerAs: 'newAlbum',
+	  bindings: {
+	    add: '&'
+	  },
+	  controller: function controller() {
+	    var _this = this;
+	
+	    this.styles = _newAlbum4.default;
+	    this.submit = function () {
+	      var album = _this.album;
+	      _this.add({ album: album });
+	      _this.album = {};
+	    };
+	  }
+	};
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <h2 ng-class=newAlbum.styles.headline>Add a new Album</h2> <form name=form ng-submit=newAlbum.submit()> <input ng-model=newAlbum.album.title placeholder=title><br> <input ng-model=newAlbum.album.description placeholder=description><br> <button type=submit>Add Album</button> </form> </section>";
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(27);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newAlbum.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newAlbum.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"newAlbum.scss","sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _newImage = __webpack_require__(29);
+	
+	var _newImage2 = _interopRequireDefault(_newImage);
+	
+	var _newImage3 = __webpack_require__(30);
+	
+	var _newImage4 = _interopRequireDefault(_newImage3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _newImage2.default,
+	  controllerAs: 'newImage',
+	  bindings: {
+	    add: '&',
+	    albums: '<'
+	  },
+	  controller: controller
+	};
+	
+	
+	function controller() {
+	  var _this = this;
+	
+	  this.styles = _newImage4.default;
+	  this.submit = function () {
+	    var image = _this.image;
+	    _this.add({ image: image });
+	    _this.image = {};
+	  };
+	  console.log(this);
+	}
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <h2 ng-class=newImage.styles.headline>Add a new Image</h2> <form name=form ng-submit=newImage.submit()> <input ng-model=newImage.image.title placeholder=title><br> <input ng-model=newImage.image.description placeholder=description><br> <input ng-model=newImage.image.url placeholder=url><br> <select ng-model=newImage.image.album> <option>-- Select an album --</option> <option ng-repeat=\"album in newImage.albums\" value={{album._id}}>{{album.title}}</option> </select> <button type=submit>Add Image</button> </form> </section>";
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(31);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newImage.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./newImage.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "\n", "", {"version":3,"sources":[],"names":[],"mappings":"","file":"newImage.scss","sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _signin = __webpack_require__(33);
+	
+	var _signin2 = _interopRequireDefault(_signin);
+	
+	__webpack_require__(34);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _signin2.default,
+	  bindings: {
+	    success: '&'
+	  },
+	  controller: controller
+	};
+	
+	
+	controller.$inject = ['userService'];
+	
+	function controller(userService) {
+	  var _this = this;
+	
+	  this.credentials = {
+	    username: '',
+	    password: ''
+	  };
+	
+	  this.authenticate = function () {
+	    return userService.signin(_this.credentials).then(function () {
+	      _this.success();
+	      return true;
+	    }).catch(function (error) {
+	      _this.error = error;
+	      return false;
+	    });
+	  };
+	}
+
+/***/ },
+/* 33 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <h2>Sign in to access your account</h2> <form name=auth ng-submit=$ctrl.authenticate()> <div> <label> username: <input ng-model=$ctrl.credentials.username> </label> </div> <div> <label> password: <input type=password ng-model=$ctrl.credentials.password> </label> </div> <button type=submit>Sign In</button> </form> <div class=error ng-if=$ctrl.error>{{$ctrl.error.reason}}</div> </section>";
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(35);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./signin.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./signin.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".error {\n  color: red; }\n", "", {"version":3,"sources":["/./src/app/src/components/signin/signin.scss"],"names":[],"mappings":"AAAA;EACC,WAAW,EACX","file":"signin.scss","sourcesContent":[".error {\n\tcolor: red;\n}\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _signup = __webpack_require__(37);
+	
+	var _signup2 = _interopRequireDefault(_signup);
+	
+	__webpack_require__(38);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _signup2.default,
+	  bindings: {
+	    success: '&'
+	  },
+	  controller: controller
+	};
+	
+	
+	controller.$inject = ['userService'];
+	
+	function controller(userService) {
+	  var _this = this;
+	
+	  this.credentials = {
+	    username: '',
+	    password: ''
+	  };
+	
+	  this.authenticate = function () {
+	    return userService.signup(_this.credentials).then(function () {
+	      _this.success();
+	      return true;
+	    }).catch(function (error) {
+	      _this.error = error;
+	      return false;
+	    });
+	  };
+	}
+
+/***/ },
+/* 37 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <h2>Sign up for the awesome todo app</h2> <form name=auth ng-submit=$ctrl.authenticate()> <div> <label> email: <input ng-model=$ctrl.credentials.email> </label> </div> <div> <label> username: <input ng-model=$ctrl.credentials.username> </label> </div> <div> <label> password: <input type=password ng-model=$ctrl.credentials.password> </label> </div> <button type=submit>Sign Up</button> </form> <div class=error ng-if=$ctrl.error>{{$ctrl.error.reason}}</div> </section>";
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(39);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./signup.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./signup.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, ".error {\n  color: red; }\n", "", {"version":3,"sources":["/./src/app/src/components/signup/signup.scss"],"names":[],"mappings":"AAAA;EACC,WAAW,EACX","file":"signup.scss","sourcesContent":[".error {\n\tcolor: red;\n}\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _slideshow = __webpack_require__(41);
+	
+	var _slideshow2 = _interopRequireDefault(_slideshow);
+	
+	var _slideshow3 = __webpack_require__(42);
+	
+	var _slideshow4 = _interopRequireDefault(_slideshow3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _slideshow2.default,
+	  controllerAs: 'slideshow',
+	  bindings: {
+	    data: '<' //,
+	    // image: '<'
+	  },
+	  controller: controller
+	};
+	
+	function controller() {
+	  this.index = 0;
+	
+	  this.prev = function () {
+	    if (--this.index < 0) this.index = this.data.length - 1;
+	  };
+	  this.next = function () {
+	    if (++this.index > this.data.length - 1) this.index = 0;
+	  };
+	  this.styles = _slideshow4.default;
+	}
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	module.exports = "<section id=slideshow-container> <p id=controls> <button ng-click=slideshow.prev()>Prev</button><button ng-click=slideshow.next()>Next</button> </p> <p id=slides> </p><h3>{{slideshow.data[slideshow.index].title}}</h3> <img ng-src={{slideshow.data[slideshow.index].url}}><br> {{slideshow.data[slideshow.index].description}} <p></p> </section>";
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(43);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./slideshow.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./slideshow.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "img {\n  max-width: 500px; }\n\n#controls {\n  margin: 0 auto; }\n\n#slideshow-container {\n  width: 92%;\n  padding: 0 20 0 20;\n  margin: 0 auto; }\n", "", {"version":3,"sources":["/./src/app/src/components/slideshow/slideshow.scss"],"names":[],"mappings":"AAIA;EACE,iBAAiB,EAClB;;AAED;EACE,eAAe,EAEhB;;AAED;EACE,WAAW;EACX,mBAAmB;EACnB,eAAe,EAChB","file":"slideshow.scss","sourcesContent":["// :local(.headline){\n//   color: green;\n// }\n\nimg {\n  max-width: 500px;\n}\n\n#controls {\n  margin: 0 auto;\n\n}\n\n#slideshow-container {\n  width: 92%;\n  padding: 0 20 0 20;\n  margin: 0 auto;\n}\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _tile = __webpack_require__(45);
+	
+	var _tile2 = _interopRequireDefault(_tile);
+	
+	var _tile3 = __webpack_require__(46);
+	
+	var _tile4 = _interopRequireDefault(_tile3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _tile2.default,
+	  controllerAs: 'tile',
+	  bindings: {
+	    data: '<'
+	  },
+	  controller: function controller() {
+	    this.styles = _tile4.default;
+	  }
+	};
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <div ng-class=tile.styles.div> <section ng-class=tile.styles.tile ng-repeat=\"image in tile.data\"> <h4>{{image.title}}</h4> <img ng-class=tile.styles.image title={{image.description}} ng-src={{image.url}}> </section> </div> </section>";
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(47);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./tile.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "section {\n  background-color: #a9bfdb; }\n\n._3Z9723Z-u3TyVc5DrtY4y8 {\n  height: 80%;\n  width: 80%;\n  display: block;\n  margin: 0 auto; }\n\n._1PzfbPn0h_F2FO1IfolxEV {\n  list-style: none; }\n\n._2KyHjiWk8wm9-vDLYGthQ {\n  height: 220px;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow: 3px 3px 8px black;\n  border: 1px solid darkgray;\n  background-color: white; }\n\n._1RgYnP1XMyv_tNjt-uj1fu {\n  background-color: white;\n  width: 92%;\n  min-height: 264px;\n  height: auto;\n  padding: 8px;\n  display: flex;\n  flex-flow: row wrap;\n  border: 1px solid darkgray;\n  margin: 0 auto; }\n", "", {"version":3,"sources":["/./src/app/src/components/tile/tile.scss","/./src/app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAOA;EACE,0BCLuB,EDMxB;;AAED;EACE,YARc;EASd,WATc;EAUd,eAAc;EACd,eAAc,EACf;;AAED;EACE,iBAAiB,EAClB;;AAED;EACE,cAlBiB;EAmBjB,aAAa;EACb,iBAAiB;EACjB,aAAa;EACb,cAAc;EACd,8BAA6B;EA1B7B,2BAA2B;EA8B3B,wBAAwB,EACzB;;AAED;EACE,wBAAwB;EACxB,WAAU;EACV,kBAAwB;EACxB,aAAY;EACZ,aAAY;EACZ,cAAc;EACd,oBAAoB;EAxCpB,2BAA2B;EA0C3B,eAAe,EAChB","file":"tile.scss","sourcesContent":["@import '../../scss/includes/colors';\n@mixin border {\n  border: 1px solid darkgray;\n}\n$thumb-size: 80%;\n$tile-height: 220px;\n\nsection {\n  background-color: $image-background;\n}\n\n:local(.image) {\n  height: $thumb-size;\n  width: $thumb-size;\n  display:block;\n  margin:0 auto;\n}\n\n:local(.list) {\n  list-style: none;\n}\n\n:local(.tile) {\n  height: $tile-height;\n  width: 200px;\n  font-size: 0.7em;\n  margin: 20px;\n  padding: 10px;\n  box-shadow:3px 3px 8px black;\n  @include border;\n\n\n  background-color: white;\n}\n\n:local(.div){\n  background-color: white;\n  width:92%;\n  min-height: $tile-height * 1.2;\n  height:auto;\n  padding:8px;\n  display: flex;\n  flex-flow: row wrap;\n  @include border;\n  margin: 0 auto;\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+	exports.locals = {
+		"image": "_3Z9723Z-u3TyVc5DrtY4y8",
+		"list": "_1PzfbPn0h_F2FO1IfolxEV",
+		"tile": "_2KyHjiWk8wm9-vDLYGthQ",
+		"div": "_1RgYnP1XMyv_tNjt-uj1fu"
+	};
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _userAuth = __webpack_require__(49);
+	
+	var _userAuth2 = _interopRequireDefault(_userAuth);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _userAuth2.default,
+	  bindings: {
+	    success: '&'
+	  },
+	  controller: controller
+	};
+	
+	
+	function controller() {
+	  this.action = 'signin';
+	}
+
+/***/ },
+/* 49 */
+/***/ function(module, exports) {
+
+	module.exports = "<div> <label> <input type=radio ng-model=$ctrl.action value=signin> Sign In </label> <label> <input type=radio ng-model=$ctrl.action value=signup> Sign Up </label> </div> <signin ng-if=\"$ctrl.action === 'signin'\" success=$ctrl.success()></signin> <signup ng-if=\"$ctrl.action === 'signup'\" success=$ctrl.success()></signup>";
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _viewSelector = __webpack_require__(51);
+	
+	var _viewSelector2 = _interopRequireDefault(_viewSelector);
+	
+	var _viewSelector3 = __webpack_require__(52);
+	
+	var _viewSelector4 = _interopRequireDefault(_viewSelector3);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  template: _viewSelector2.default,
+	  controllerAs: 'viewSelector',
+	  bindings: {
+	    view: '=',
+	    images: '=',
+	    albums: '=',
+	    image: '='
+	  },
+	  controller: controller
+	};
+	
+	
+	controller.inject = ['imageService', 'albumService'];
+	
+	function controller(imageService, albumService) {
+	  var _this = this;
+	
+	  this.uiOnParamsChanged = function (params) {
+	    _this.view = params.view;
+	    _this.image = params.image;
+	    console.log('params changed: ', params);
+	  };
+	
+	  this.styles = _viewSelector4.default;
+	
+	  this.addImage = function (image) {
+	    var albumId = void 0;
+	    if (_this.images[0]) albumId = _this.images[0].album;else albumId = '';
+	    imageService.add(image).then(function (image) {
+	      if (image.album === albumId) _this.images.push(image);
+	    }).catch(function (err) {
+	      return console.error(err);
+	    });
+	  };
+	
+	  this.deleteImage = function (id) {
+	    var albumId = _this.images[0].album;
+	    imageService.delete(id).then(function () {
+	      var index = _this.images.findIndex(function (image) {
+	        return image._id === id;
+	      });
+	      if (index !== -1) _this.images.splice(index, 1);
+	      if (_this.images.length === 0) albumService.delete(albumId);
+	    }).catch(function (err) {
+	      return console.error(err);
+	    });
+	  };
+	}
+
+/***/ },
+/* 51 */
+/***/ function(module, exports) {
+
+	module.exports = "<section> <list ng-if=\"(viewSelector.view === 'list')\" data=viewSelector.images delete-image=viewSelector.deleteImage(id)></list> <tile ng-if=\"(viewSelector.view === 'tile')\" data=viewSelector.images></tile> <slideshow ng-if=\"(viewSelector.view === 'slideshow')\" data=viewSelector.images image=viewSelector.image></slideshow> <hr> </section>";
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(53);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./viewSelector.scss", function() {
+				var newContent = require("!!./../../../node_modules/css-loader/index.js?sourceMap!./../../../node_modules/sass-loader/index.js?sourceMap!./viewSelector.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "nav {\n  display: flex;\n  height: 35px;\n  padding-top: 20px;\n  background: lightsteelblue; }\n  nav #selector {\n    width: 160px; }\n\n#images {\n  padding-top: 15px; }\n", "", {"version":3,"sources":["/./src/app/src/components/viewSelector/viewSelector.scss","/./src/app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAEA;EACE,cAAc;EACd,aAAa;EACb,kBAAkB;EAClB,2BCJgC,EDSjC;EATD;IAOI,aAAa,EACd;;AAGH;EACE,kBAAkB,EACnB","file":"viewSelector.scss","sourcesContent":["@import 'colors';\n\nnav {\n  display: flex;\n  height: 35px;\n  padding-top: 20px;\n  background: $header-background;\n\n  #selector {\n    width: 160px;\n  }\n}\n\n#images {\n  padding-top: 15px;\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
+	
+	// exports
+
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	
+	var _angular = __webpack_require__(1);
+	
+	var _angular2 = _interopRequireDefault(_angular);
+	
+	var _camelcase = __webpack_require__(6);
+	
+	var _camelcase2 = _interopRequireDefault(_camelcase);
+	
+	var _path = __webpack_require__(7);
+	
+	var _path2 = _interopRequireDefault(_path);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var reqContext = __webpack_require__(55);
+	
+	var services = _angular2.default.module('services', []);
+	
+	reqContext.keys().forEach(function (key) {
+		var name = (0, _camelcase2.default)(_path2.default.basename(key, '.js'));
+		services.factory(name, reqContext(key).default);
+	});
+	
+	exports.default = services.name;
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./albumService.js": 56,
+		"./imageService.js": 57,
+		"./tokenService.js": 58,
+		"./userService.js": 59
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 55;
+
+
+/***/ },
+/* 56 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = albumService;
+	albumService.$inject = ['$http', 'apiUrl'];
+	
+	function albumService($http, apiUrl) {
+	
+	  return {
+	    get: function get() {
+	      return $http.get(apiUrl + '/album').then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    add: function add(album) {
+	      return $http.post(apiUrl + '/album', album).then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    delete: function _delete(albumId) {
+	      return $http.delete(apiUrl + '/album/' + albumId).then(function (r) {
+	        return r.data;
+	      });
+	    }
+	  };
+	}
+
+/***/ },
+/* 57 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = imageService;
+	imageService.$inject = ['$http', 'apiUrl'];
+	
+	function imageService($http, apiUrl) {
+	
+	  return {
+	    get: function get() {
+	      return $http.get(apiUrl + '/image').then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    getImage: function getImage(imageId) {
+	      return $http.get(apiUrl + '/image/' + imageId).then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    getImagesByAlbum: function getImagesByAlbum(albumId) {
+	      return $http.get(apiUrl + '/album/' + albumId).then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    add: function add(image) {
+	      return $http.post(apiUrl + '/image', image).then(function (r) {
+	        return r.data;
+	      });
+	    },
+	    delete: function _delete(imageId) {
+	      return $http.delete(apiUrl + '/image/' + imageId).then(function (r) {
+	        return r.data;
+	      });
+	    }
+	  };
+	}
+
+/***/ },
+/* 58 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = tokenService;
+	tokenService.$inject = ['$window'];
+	
+	var TOKEN_NAME = 'token';
+	
+	function tokenService($window) {
+	
+	  return {
+	    get: function get() {
+	      return $window.localStorage.getItem(TOKEN_NAME);
+	    },
+	    remove: function remove() {
+	      $window.localStorage.removeItem(TOKEN_NAME);
+	    },
+	    set: function set(token) {
+	      $window.localStorage.setItem(TOKEN_NAME, token);
+	    }
+	  };
+	}
+
+/***/ },
+/* 59 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = userService;
+	userService.$inject = ['tokenService', '$http', 'apiUrl'];
+	
+	function userService(token, $http, apiUrl) {
+	
+	  var current = token.get();
+	  if (current) {
+	    $http.get(apiUrl + '/verify').catch(function () {
+	      return token.remove();
+	    });
+	  }
+	
+	  return {
+	    isAuthed: function isAuthed() {
+	      return !!token.get();
+	    },
+	    logout: function logout() {
+	      token.remove();
+	    },
+	    signin: function signin(credentials) {
+	      return $http.post(apiUrl + '/signin', credentials).then(function (result) {
+	        token.set(result.data.token);
+	      }).catch(function (err) {
+	        throw err.data;
+	      });
+	    },
+	    signup: function signup(credentials) {
+	      return $http.post(apiUrl + '/signup', credentials).then(function (result) {
+	        token.set(result.data.token);
+	      }).catch(function (err) {
+	        throw err.data;
+	      });
+	    }
+	  };
+	}
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+	 * ngDialog - easy modals and popup windows
+	 * http://github.com/likeastore/ngDialog
+	 * (c) 2013-2015 MIT License, https://likeastore.com
+	 */
+	
+	(function (root, factory) {
+	    if (typeof module !== 'undefined' && module.exports) {
+	        // CommonJS
+	        if (typeof angular === 'undefined') {
+	            factory(__webpack_require__(1));
+	        } else {
+	            factory(angular);
+	        }
+	        module.exports = 'ngDialog';
+	    } else if (true) {
+	        // AMD
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(1)], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else {
+	        // Global Variables
+	        factory(root.angular);
+	    }
+	}(this, function (angular) {
+	    'use strict';
+	
+	    var m = angular.module('ngDialog', []);
+	
+	    var $el = angular.element;
+	    var isDef = angular.isDefined;
+	    var style = (document.body || document.documentElement).style;
+	    var animationEndSupport = isDef(style.animation) || isDef(style.WebkitAnimation) || isDef(style.MozAnimation) || isDef(style.MsAnimation) || isDef(style.OAnimation);
+	    var animationEndEvent = 'animationend webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend';
+	    var focusableElementSelector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), iframe, object, embed, *[tabindex], *[contenteditable]';
+	    var disabledAnimationClass = 'ngdialog-disabled-animation';
+	    var forceElementsReload = { html: false, body: false };
+	    var scopes = {};
+	    var openIdStack = [];
+	    var keydownIsBound = false;
+	    var openOnePerName = false;
+	
+	
+	    m.provider('ngDialog', function () {
+	        var defaults = this.defaults = {
+	            className: 'ngdialog-theme-default',
+	            appendClassName: '',
+	            disableAnimation: false,
+	            plain: false,
+	            showClose: true,
+	            closeByDocument: true,
+	            closeByEscape: true,
+	            closeByNavigation: false,
+	            appendTo: false,
+	            preCloseCallback: false,
+	            overlay: true,
+	            cache: true,
+	            trapFocus: true,
+	            preserveFocus: true,
+	            ariaAuto: true,
+	            ariaRole: null,
+	            ariaLabelledById: null,
+	            ariaLabelledBySelector: null,
+	            ariaDescribedById: null,
+	            ariaDescribedBySelector: null,
+	            bodyClassName: 'ngdialog-open',
+	            width: null
+	        };
+	
+	        this.setForceHtmlReload = function (_useIt) {
+	            forceElementsReload.html = _useIt || false;
+	        };
+	
+	        this.setForceBodyReload = function (_useIt) {
+	            forceElementsReload.body = _useIt || false;
+	        };
+	
+	        this.setDefaults = function (newDefaults) {
+	            angular.extend(defaults, newDefaults);
+	        };
+	
+	        this.setOpenOnePerName = function (isOpenOne) {
+	            openOnePerName = isOpenOne || false;
+	        };
+	
+	        var globalID = 0, dialogsCount = 0, closeByDocumentHandler, defers = {};
+	
+	        this.$get = ['$document', '$templateCache', '$compile', '$q', '$http', '$rootScope', '$timeout', '$window', '$controller', '$injector',
+	            function ($document, $templateCache, $compile, $q, $http, $rootScope, $timeout, $window, $controller, $injector) {
+	                var $elements = [];
+	
+	                var privateMethods = {
+	                    onDocumentKeydown: function (event) {
+	                        if (event.keyCode === 27) {
+	                            publicMethods.close('$escape');
+	                        }
+	                    },
+	
+	                    activate: function($dialog) {
+	                        var options = $dialog.data('$ngDialogOptions');
+	
+	                        if (options.trapFocus) {
+	                            $dialog.on('keydown', privateMethods.onTrapFocusKeydown);
+	
+	                            // Catch rogue changes (eg. after unfocusing everything by clicking a non-focusable element)
+	                            $elements.body.on('keydown', privateMethods.onTrapFocusKeydown);
+	                        }
+	                    },
+	
+	                    deactivate: function ($dialog) {
+	                        $dialog.off('keydown', privateMethods.onTrapFocusKeydown);
+	                        $elements.body.off('keydown', privateMethods.onTrapFocusKeydown);
+	                    },
+	
+	                    deactivateAll: function (els) {
+	                        angular.forEach(els,function(el) {
+	                            var $dialog = angular.element(el);
+	                            privateMethods.deactivate($dialog);
+	                        });
+	                    },
+	
+	                    setBodyPadding: function (width) {
+	                        var originalBodyPadding = parseInt(($elements.body.css('padding-right') || 0), 10);
+	                        $elements.body.css('padding-right', (originalBodyPadding + width) + 'px');
+	                        $elements.body.data('ng-dialog-original-padding', originalBodyPadding);
+	                        $rootScope.$broadcast('ngDialog.setPadding', width);
+	                    },
+	
+	                    resetBodyPadding: function () {
+	                        var originalBodyPadding = $elements.body.data('ng-dialog-original-padding');
+	                        if (originalBodyPadding) {
+	                            $elements.body.css('padding-right', originalBodyPadding + 'px');
+	                        } else {
+	                            $elements.body.css('padding-right', '');
+	                        }
+	                        $rootScope.$broadcast('ngDialog.setPadding', 0);
+	                    },
+	
+	                    performCloseDialog: function ($dialog, value) {
+	                        var options = $dialog.data('$ngDialogOptions');
+	                        var id = $dialog.attr('id');
+	                        var scope = scopes[id];
+	
+	                        if (!scope) {
+	                            // Already closed
+	                            return;
+	                        }
+	
+	                        if (typeof $window.Hammer !== 'undefined') {
+	                            var hammerTime = scope.hammerTime;
+	                            hammerTime.off('tap', closeByDocumentHandler);
+	                            hammerTime.destroy && hammerTime.destroy();
+	                            delete scope.hammerTime;
+	                        } else {
+	                            $dialog.unbind('click');
+	                        }
+	
+	                        if (dialogsCount === 1) {
+	                            $elements.body.unbind('keydown', privateMethods.onDocumentKeydown);
+	                        }
+	
+	                        if (!$dialog.hasClass('ngdialog-closing')){
+	                            dialogsCount -= 1;
+	                        }
+	
+	                        var previousFocus = $dialog.data('$ngDialogPreviousFocus');
+	                        if (previousFocus && previousFocus.focus) {
+	                            previousFocus.focus();
+	                        }
+	
+	                        $rootScope.$broadcast('ngDialog.closing', $dialog, value);
+	                        dialogsCount = dialogsCount < 0 ? 0 : dialogsCount;
+	                        if (animationEndSupport && !options.disableAnimation) {
+	                            scope.$destroy();
+	                            $dialog.unbind(animationEndEvent).bind(animationEndEvent, function () {
+	                                privateMethods.closeDialogElement($dialog, value);
+	                            }).addClass('ngdialog-closing');
+	                        } else {
+	                            scope.$destroy();
+	                            privateMethods.closeDialogElement($dialog, value);
+	                        }
+	                        if (defers[id]) {
+	                            defers[id].resolve({
+	                                id: id,
+	                                value: value,
+	                                $dialog: $dialog,
+	                                remainingDialogs: dialogsCount
+	                            });
+	                            delete defers[id];
+	                        }
+	                        if (scopes[id]) {
+	                            delete scopes[id];
+	                        }
+	                        openIdStack.splice(openIdStack.indexOf(id), 1);
+	                        if (!openIdStack.length) {
+	                            $elements.body.unbind('keydown', privateMethods.onDocumentKeydown);
+	                            keydownIsBound = false;
+	                        }
+	                    },
+	
+	                    closeDialogElement: function($dialog, value) {
+	                        var options = $dialog.data('$ngDialogOptions');
+	                        $dialog.remove();
+	                        if (dialogsCount === 0) {
+	                            $elements.html.removeClass(options.bodyClassName);
+	                            $elements.body.removeClass(options.bodyClassName);
+	                            privateMethods.resetBodyPadding();
+	                        }
+	                        $rootScope.$broadcast('ngDialog.closed', $dialog, value);
+	                    },
+	
+	                    closeDialog: function ($dialog, value) {
+	                        var preCloseCallback = $dialog.data('$ngDialogPreCloseCallback');
+	
+	                        if (preCloseCallback && angular.isFunction(preCloseCallback)) {
+	
+	                            var preCloseCallbackResult = preCloseCallback.call($dialog, value);
+	
+	                            if (angular.isObject(preCloseCallbackResult)) {
+	                                if (preCloseCallbackResult.closePromise) {
+	                                    preCloseCallbackResult.closePromise.then(function () {
+	                                        privateMethods.performCloseDialog($dialog, value);
+	                                    });
+	                                } else {
+	                                    preCloseCallbackResult.then(function () {
+	                                        privateMethods.performCloseDialog($dialog, value);
+	                                    }, function () {
+	                                        return;
+	                                    });
+	                                }
+	                            } else if (preCloseCallbackResult !== false) {
+	                                privateMethods.performCloseDialog($dialog, value);
+	                            }
+	                        } else {
+	                            privateMethods.performCloseDialog($dialog, value);
+	                        }
+	                    },
+	
+	                    onTrapFocusKeydown: function(ev) {
+	                        var el = angular.element(ev.currentTarget);
+	                        var $dialog;
+	
+	                        if (el.hasClass('ngdialog')) {
+	                            $dialog = el;
+	                        } else {
+	                            $dialog = privateMethods.getActiveDialog();
+	
+	                            if ($dialog === null) {
+	                                return;
+	                            }
+	                        }
+	
+	                        var isTab = (ev.keyCode === 9);
+	                        var backward = (ev.shiftKey === true);
+	
+	                        if (isTab) {
+	                            privateMethods.handleTab($dialog, ev, backward);
+	                        }
+	                    },
+	
+	                    handleTab: function($dialog, ev, backward) {
+	                        var focusableElements = privateMethods.getFocusableElements($dialog);
+	
+	                        if (focusableElements.length === 0) {
+	                            if (document.activeElement && document.activeElement.blur) {
+	                                document.activeElement.blur();
+	                            }
+	                            return;
+	                        }
+	
+	                        var currentFocus = document.activeElement;
+	                        var focusIndex = Array.prototype.indexOf.call(focusableElements, currentFocus);
+	
+	                        var isFocusIndexUnknown = (focusIndex === -1);
+	                        var isFirstElementFocused = (focusIndex === 0);
+	                        var isLastElementFocused = (focusIndex === focusableElements.length - 1);
+	
+	                        var cancelEvent = false;
+	
+	                        if (backward) {
+	                            if (isFocusIndexUnknown || isFirstElementFocused) {
+	                                focusableElements[focusableElements.length - 1].focus();
+	                                cancelEvent = true;
+	                            }
+	                        } else {
+	                            if (isFocusIndexUnknown || isLastElementFocused) {
+	                                focusableElements[0].focus();
+	                                cancelEvent = true;
+	                            }
+	                        }
+	
+	                        if (cancelEvent) {
+	                            ev.preventDefault();
+	                            ev.stopPropagation();
+	                        }
+	                    },
+	
+	                    autoFocus: function($dialog) {
+	                        var dialogEl = $dialog[0];
+	
+	                        // Browser's (Chrome 40, Forefix 37, IE 11) don't appear to honor autofocus on the dialog, but we should
+	                        var autoFocusEl = dialogEl.querySelector('*[autofocus]');
+	                        if (autoFocusEl !== null) {
+	                            autoFocusEl.focus();
+	
+	                            if (document.activeElement === autoFocusEl) {
+	                                return;
+	                            }
+	
+	                            // Autofocus element might was display: none, so let's continue
+	                        }
+	
+	                        var focusableElements = privateMethods.getFocusableElements($dialog);
+	
+	                        if (focusableElements.length > 0) {
+	                            focusableElements[0].focus();
+	                            return;
+	                        }
+	
+	                        // We need to focus something for the screen readers to notice the dialog
+	                        var contentElements = privateMethods.filterVisibleElements(dialogEl.querySelectorAll('h1,h2,h3,h4,h5,h6,p,span'));
+	
+	                        if (contentElements.length > 0) {
+	                            var contentElement = contentElements[0];
+	                            $el(contentElement).attr('tabindex', '-1').css('outline', '0');
+	                            contentElement.focus();
+	                        }
+	                    },
+	
+	                    getFocusableElements: function ($dialog) {
+	                        var dialogEl = $dialog[0];
+	
+	                        var rawElements = dialogEl.querySelectorAll(focusableElementSelector);
+	
+	                        // Ignore untabbable elements, ie. those with tabindex = -1
+	                        var tabbableElements = privateMethods.filterTabbableElements(rawElements);
+	
+	                        return privateMethods.filterVisibleElements(tabbableElements);
+	                    },
+	
+	                    filterTabbableElements: function (els) {
+	                        var tabbableFocusableElements = [];
+	
+	                        for (var i = 0; i < els.length; i++) {
+	                            var el = els[i];
+	
+	                            if ($el(el).attr('tabindex') !== '-1') {
+	                                tabbableFocusableElements.push(el);
+	                            }
+	                        }
+	
+	                        return tabbableFocusableElements;
+	                    },
+	
+	                    filterVisibleElements: function (els) {
+	                        var visibleFocusableElements = [];
+	
+	                        for (var i = 0; i < els.length; i++) {
+	                            var el = els[i];
+	
+	                            if (el.offsetWidth > 0 || el.offsetHeight > 0) {
+	                                visibleFocusableElements.push(el);
+	                            }
+	                        }
+	
+	                        return visibleFocusableElements;
+	                    },
+	
+	                    getActiveDialog: function () {
+	                        var dialogs = document.querySelectorAll('.ngdialog');
+	
+	                        if (dialogs.length === 0) {
+	                            return null;
+	                        }
+	
+	                        // TODO: This might be incorrect if there are a mix of open dialogs with different 'appendTo' values
+	                        return $el(dialogs[dialogs.length - 1]);
+	                    },
+	
+	                    applyAriaAttributes: function ($dialog, options) {
+	                        if (options.ariaAuto) {
+	                            if (!options.ariaRole) {
+	                                var detectedRole = (privateMethods.getFocusableElements($dialog).length > 0) ?
+	                                    'dialog' :
+	                                    'alertdialog';
+	
+	                                options.ariaRole = detectedRole;
+	                            }
+	
+	                            if (!options.ariaLabelledBySelector) {
+	                                options.ariaLabelledBySelector = 'h1,h2,h3,h4,h5,h6';
+	                            }
+	
+	                            if (!options.ariaDescribedBySelector) {
+	                                options.ariaDescribedBySelector = 'article,section,p';
+	                            }
+	                        }
+	
+	                        if (options.ariaRole) {
+	                            $dialog.attr('role', options.ariaRole);
+	                        }
+	
+	                        privateMethods.applyAriaAttribute(
+	                            $dialog, 'aria-labelledby', options.ariaLabelledById, options.ariaLabelledBySelector);
+	
+	                        privateMethods.applyAriaAttribute(
+	                            $dialog, 'aria-describedby', options.ariaDescribedById, options.ariaDescribedBySelector);
+	                    },
+	
+	                    applyAriaAttribute: function($dialog, attr, id, selector) {
+	                        if (id) {
+	                            $dialog.attr(attr, id);
+	                        }
+	
+	                        if (selector) {
+	                            var dialogId = $dialog.attr('id');
+	
+	                            var firstMatch = $dialog[0].querySelector(selector);
+	
+	                            if (!firstMatch) {
+	                                return;
+	                            }
+	
+	                            var generatedId = dialogId + '-' + attr;
+	
+	                            $el(firstMatch).attr('id', generatedId);
+	
+	                            $dialog.attr(attr, generatedId);
+	
+	                            return generatedId;
+	                        }
+	                    },
+	
+	                    detectUIRouter: function() {
+	                        //Detect if ui-router module is installed if not return false
+	                        try {
+	                            angular.module('ui.router');
+	                            return true;
+	                        } catch(err) {
+	                            return false;
+	                        }
+	                    },
+	
+	                    getRouterLocationEventName: function() {
+	                        if(privateMethods.detectUIRouter()) {
+	                            return '$stateChangeSuccess';
+	                        }
+	                        return '$locationChangeSuccess';
+	                    }
+	                };
+	
+	                var publicMethods = {
+	                    __PRIVATE__: privateMethods,
+	
+	                    /*
+	                     * @param {Object} options:
+	                     * - template {String} - id of ng-template, url for partial, plain string (if enabled)
+	                     * - plain {Boolean} - enable plain string templates, default false
+	                     * - scope {Object}
+	                     * - controller {String}
+	                     * - controllerAs {String}
+	                     * - className {String} - dialog theme class
+	                     * - appendClassName {String} - dialog theme class to be appended to defaults
+	                     * - disableAnimation {Boolean} - set to true to disable animation
+	                     * - showClose {Boolean} - show close button, default true
+	                     * - closeByEscape {Boolean} - default true
+	                     * - closeByDocument {Boolean} - default true
+	                     * - preCloseCallback {String|Function} - user supplied function name/function called before closing dialog (if set)
+	                     * - bodyClassName {String} - class added to body at open dialog
+	                     * @return {Object} dialog
+	                     */
+	                    open: function (opts) {
+	                        var dialogID = null;
+	                        opts = opts || {};
+	                        if (openOnePerName && opts.name) {
+	                            dialogID = opts.name+' dialog';
+	                            if (this.isOpen(dialogID)) {
+	                                return;
+	                            }
+	                        }
+	                        var options = angular.copy(defaults);
+	                        var localID = ++globalID;
+	                        dialogID = dialogID || 'ngdialog' + localID;
+	                        openIdStack.push(dialogID);
+	
+	                        // Merge opts.data with predefined via setDefaults
+	                        if (typeof options.data !== 'undefined') {
+	                            if (typeof opts.data === 'undefined') {
+	                                opts.data = {};
+	                            }
+	                            opts.data = angular.merge(angular.copy(options.data), opts.data);
+	                        }
+	
+	                        angular.extend(options, opts);
+	
+	                        var defer;
+	                        defers[dialogID] = defer = $q.defer();
+	
+	                        var scope;
+	                        scopes[dialogID] = scope = angular.isObject(options.scope) ? options.scope.$new() : $rootScope.$new();
+	
+	                        var $dialog, $dialogParent;
+	
+	                        var resolve = angular.extend({}, options.resolve);
+	
+	                        angular.forEach(resolve, function (value, key) {
+	                            resolve[key] = angular.isString(value) ? $injector.get(value) : $injector.invoke(value, null, null, key);
+	                        });
+	
+	                        $q.all({
+	                            template: loadTemplate(options.template || options.templateUrl),
+	                            locals: $q.all(resolve)
+	                        }).then(function (setup) {
+	                            var template = setup.template,
+	                                locals = setup.locals;
+	
+	                            if (options.showClose) {
+	                                template += '<div class="ngdialog-close"></div>';
+	                            }
+	
+	                            var hasOverlayClass = options.overlay ? '' : ' ngdialog-no-overlay';
+	                            $dialog = $el('<div id="'+dialogID + '" class="ngdialog' + hasOverlayClass + '"></div>');
+	                            $dialog.html((options.overlay ?
+	                                '<div class="ngdialog-overlay"></div><div class="ngdialog-content" role="document">' + template + '</div>' :
+	                                '<div class="ngdialog-content" role="document">' + template + '</div>'));
+	
+	                            $dialog.data('$ngDialogOptions', options);
+	
+	                            scope.ngDialogId = dialogID;
+	
+	                            if (options.data && angular.isString(options.data)) {
+	                                var firstLetter = options.data.replace(/^\s*/, '')[0];
+	                                scope.ngDialogData = (firstLetter === '{' || firstLetter === '[') ? angular.fromJson(options.data) : new String(options.data);
+	                                scope.ngDialogData.ngDialogId = dialogID;
+	                            } else if (options.data && angular.isObject(options.data)) {
+	                                scope.ngDialogData = options.data;
+	                                scope.ngDialogData.ngDialogId = dialogID;
+	                            }
+	
+	                            if (options.className) {
+	                                $dialog.addClass(options.className);
+	                            }
+	
+	                            if (options.appendClassName) {
+	                                $dialog.addClass(options.appendClassName);
+	                            }
+	
+	                            if (options.width) {
+	                                var $dialogContent = $dialog[0].querySelector('.ngdialog-content');
+	                                if (angular.isString(options.width)) {
+	                                    $dialogContent.style.width = options.width;
+	                                } else {
+	                                    $dialogContent.style.width = options.width + 'px';
+	                                }
+	                            }
+	
+	                            if (options.disableAnimation) {
+	                                $dialog.addClass(disabledAnimationClass);
+	                            }
+	
+	                            if (options.appendTo && angular.isString(options.appendTo)) {
+	                                $dialogParent = angular.element(document.querySelector(options.appendTo));
+	                            } else {
+	                                $dialogParent = $elements.body;
+	                            }
+	
+	                            privateMethods.applyAriaAttributes($dialog, options);
+	
+	                            if (options.preCloseCallback) {
+	                                var preCloseCallback;
+	
+	                                if (angular.isFunction(options.preCloseCallback)) {
+	                                    preCloseCallback = options.preCloseCallback;
+	                                } else if (angular.isString(options.preCloseCallback)) {
+	                                    if (scope) {
+	                                        if (angular.isFunction(scope[options.preCloseCallback])) {
+	                                            preCloseCallback = scope[options.preCloseCallback];
+	                                        } else if (scope.$parent && angular.isFunction(scope.$parent[options.preCloseCallback])) {
+	                                            preCloseCallback = scope.$parent[options.preCloseCallback];
+	                                        } else if ($rootScope && angular.isFunction($rootScope[options.preCloseCallback])) {
+	                                            preCloseCallback = $rootScope[options.preCloseCallback];
+	                                        }
+	                                    }
+	                                }
+	
+	                                if (preCloseCallback) {
+	                                    $dialog.data('$ngDialogPreCloseCallback', preCloseCallback);
+	                                }
+	                            }
+	
+	                            scope.closeThisDialog = function (value) {
+	                                privateMethods.closeDialog($dialog, value);
+	                            };
+	
+	                            if (options.controller && (angular.isString(options.controller) || angular.isArray(options.controller) || angular.isFunction(options.controller))) {
+	
+	                                var label;
+	
+	                                if (options.controllerAs && angular.isString(options.controllerAs)) {
+	                                    label = options.controllerAs;
+	                                }
+	
+	                                var controllerInstance = $controller(options.controller, angular.extend(
+	                                    locals,
+	                                    {
+	                                        $scope: scope,
+	                                        $element: $dialog
+	                                    }),
+	                                    true,
+	                                    label
+	                                );
+	
+	                                if(options.bindToController) {
+	                                    angular.extend(controllerInstance.instance, {ngDialogId: scope.ngDialogId, ngDialogData: scope.ngDialogData, closeThisDialog: scope.closeThisDialog});
+	                                }
+	
+	                                if(typeof controllerInstance === 'function'){
+	                                    $dialog.data('$ngDialogControllerController', controllerInstance());
+	                                } else {
+	                                    $dialog.data('$ngDialogControllerController', controllerInstance);
+	                                }
+	                            }
+	
+	                            $timeout(function () {
+	                                var $activeDialogs = document.querySelectorAll('.ngdialog');
+	                                privateMethods.deactivateAll($activeDialogs);
+	
+	                                $compile($dialog)(scope);
+	                                var widthDiffs = $window.innerWidth - $elements.body.prop('clientWidth');
+	                                $elements.html.addClass(options.bodyClassName);
+	                                $elements.body.addClass(options.bodyClassName);
+	                                var scrollBarWidth = widthDiffs - ($window.innerWidth - $elements.body.prop('clientWidth'));
+	                                if (scrollBarWidth > 0) {
+	                                    privateMethods.setBodyPadding(scrollBarWidth);
+	                                }
+	                                $dialogParent.append($dialog);
+	
+	                                privateMethods.activate($dialog);
+	
+	                                if (options.trapFocus) {
+	                                    privateMethods.autoFocus($dialog);
+	                                }
+	
+	                                if (options.name) {
+	                                    $rootScope.$broadcast('ngDialog.opened', {dialog: $dialog, name: options.name});
+	                                } else {
+	                                    $rootScope.$broadcast('ngDialog.opened', $dialog);
+	                                }
+	                            });
+	
+	                            if (!keydownIsBound) {
+	                                $elements.body.bind('keydown', privateMethods.onDocumentKeydown);
+	                                keydownIsBound = true;
+	                            }
+	
+	                            if (options.closeByNavigation) {
+	                                var eventName = privateMethods.getRouterLocationEventName();
+	                                $rootScope.$on(eventName, function () {
+	                                    privateMethods.closeDialog($dialog);
+	                                });
+	                            }
+	
+	                            if (options.preserveFocus) {
+	                                $dialog.data('$ngDialogPreviousFocus', document.activeElement);
+	                            }
+	
+	                            closeByDocumentHandler = function (event) {
+	                                var isOverlay = options.closeByDocument ? $el(event.target).hasClass('ngdialog-overlay') : false;
+	                                var isCloseBtn = $el(event.target).hasClass('ngdialog-close');
+	
+	                                if (isOverlay || isCloseBtn) {
+	                                    publicMethods.close($dialog.attr('id'), isCloseBtn ? '$closeButton' : '$document');
+	                                }
+	                            };
+	
+	                            if (typeof $window.Hammer !== 'undefined') {
+	                                var hammerTime = scope.hammerTime = $window.Hammer($dialog[0]);
+	                                hammerTime.on('tap', closeByDocumentHandler);
+	                            } else {
+	                                $dialog.bind('click', closeByDocumentHandler);
+	                            }
+	
+	                            dialogsCount += 1;
+	
+	                            return publicMethods;
+	                        });
+	
+	                        return {
+	                            id: dialogID,
+	                            closePromise: defer.promise,
+	                            close: function (value) {
+	                                privateMethods.closeDialog($dialog, value);
+	                            }
+	                        };
+	
+	                        function loadTemplateUrl (tmpl, config) {
+	                            $rootScope.$broadcast('ngDialog.templateLoading', tmpl);
+	                            return $http.get(tmpl, (config || {})).then(function(res) {
+	                                $rootScope.$broadcast('ngDialog.templateLoaded', tmpl);
+	                                return res.data || '';
+	                            });
+	                        }
+	
+	                        function loadTemplate (tmpl) {
+	                            if (!tmpl) {
+	                                return 'Empty template';
+	                            }
+	
+	                            if (angular.isString(tmpl) && options.plain) {
+	                                return tmpl;
+	                            }
+	
+	                            if (typeof options.cache === 'boolean' && !options.cache) {
+	                                return loadTemplateUrl(tmpl, {cache: false});
+	                            }
+	
+	                            return loadTemplateUrl(tmpl, {cache: $templateCache});
+	                        }
+	                    },
+	
+	                    /*
+	                     * @param {Object} options:
+	                     * - template {String} - id of ng-template, url for partial, plain string (if enabled)
+	                     * - plain {Boolean} - enable plain string templates, default false
+	                     * - name {String}
+	                     * - scope {Object}
+	                     * - controller {String}
+	                     * - controllerAs {String}
+	                     * - className {String} - dialog theme class
+	                     * - appendClassName {String} - dialog theme class to be appended to defaults
+	                     * - showClose {Boolean} - show close button, default true
+	                     * - closeByEscape {Boolean} - default false
+	                     * - closeByDocument {Boolean} - default false
+	                     * - preCloseCallback {String|Function} - user supplied function name/function called before closing dialog (if set); not called on confirm
+	                     * - bodyClassName {String} - class added to body at open dialog
+	                     *
+	                     * @return {Object} dialog
+	                     */
+	                    openConfirm: function (opts) {
+	                        var defer = $q.defer();
+	                        var options = angular.copy(defaults);
+	
+	                        opts = opts || {};
+	
+	                        // Merge opts.data with predefined via setDefaults
+	                        if (typeof options.data !== 'undefined') {
+	                            if (typeof opts.data === 'undefined') {
+	                                opts.data = {};
+	                            }
+	                            opts.data = angular.merge(angular.copy(options.data), opts.data);
+	                        }
+	
+	                        angular.extend(options, opts);
+	
+	                        options.scope = angular.isObject(options.scope) ? options.scope.$new() : $rootScope.$new();
+	                        options.scope.confirm = function (value) {
+	                            defer.resolve(value);
+	                            var $dialog = $el(document.getElementById(openResult.id));
+	                            privateMethods.performCloseDialog($dialog, value);
+	                        };
+	
+	                        var openResult = publicMethods.open(options);
+	                        if (openResult) {
+	                            openResult.closePromise.then(function (data) {
+	                                if (data) {
+	                                    return defer.reject(data.value);
+	                                }
+	                                return defer.reject();
+	                            });
+	                            return defer.promise;
+	                        }
+	                    },
+	
+	                    isOpen: function(id) {
+	                        var $dialog = $el(document.getElementById(id));
+	                        return $dialog.length > 0;
+	                    },
+	
+	                    /*
+	                     * @param {String} id
+	                     * @return {Object} dialog
+	                     */
+	                    close: function (id, value) {
+	                        var $dialog = $el(document.getElementById(id));
+	
+	                        if ($dialog.length) {
+	                            privateMethods.closeDialog($dialog, value);
+	                        } else {
+	                            if (id === '$escape') {
+	                                var topDialogId = openIdStack[openIdStack.length - 1];
+	                                $dialog = $el(document.getElementById(topDialogId));
+	                                if ($dialog.data('$ngDialogOptions').closeByEscape) {
+	                                    privateMethods.closeDialog($dialog, '$escape');
+	                                }
+	                            } else {
+	                                publicMethods.closeAll(value);
+	                            }
+	                        }
+	
+	                        return publicMethods;
+	                    },
+	
+	                    closeAll: function (value) {
+	                        var $all = document.querySelectorAll('.ngdialog');
+	
+	                        // Reverse order to ensure focus restoration works as expected
+	                        for (var i = $all.length - 1; i >= 0; i--) {
+	                            var dialog = $all[i];
+	                            privateMethods.closeDialog($el(dialog), value);
+	                        }
+	                    },
+	
+	                    getOpenDialogs: function() {
+	                        return openIdStack;
+	                    },
+	
+	                    getDefaults: function () {
+	                        return defaults;
+	                    }
+	                };
+	
+	                angular.forEach(
+	                    ['html', 'body'],
+	                    function(elementName) {
+	                        $elements[elementName] = $document.find(elementName);
+	                        if (forceElementsReload[elementName]) {
+	                            var eventName = privateMethods.getRouterLocationEventName();
+	                            $rootScope.$on(eventName, function () {
+	                                $elements[elementName] = $document.find(elementName);
+	                            });
+	                        }
+	                    }
+	                );
+	
+	                return publicMethods;
+	            }];
+	    });
+	
+	    m.directive('ngDialog', ['ngDialog', function (ngDialog) {
+	        return {
+	            restrict: 'A',
+	            scope: {
+	                ngDialogScope: '='
+	            },
+	            link: function (scope, elem, attrs) {
+	                elem.on('click', function (e) {
+	                    e.preventDefault();
+	
+	                    var ngDialogScope = angular.isDefined(scope.ngDialogScope) ? scope.ngDialogScope : 'noScope';
+	                    angular.isDefined(attrs.ngDialogClosePrevious) && ngDialog.close(attrs.ngDialogClosePrevious);
+	
+	                    var defaults = ngDialog.getDefaults();
+	
+	                    ngDialog.open({
+	                        template: attrs.ngDialog,
+	                        className: attrs.ngDialogClass || defaults.className,
+	                        appendClassName: attrs.ngDialogAppendClass,
+	                        controller: attrs.ngDialogController,
+	                        controllerAs: attrs.ngDialogControllerAs,
+	                        bindToController: attrs.ngDialogBindToController,
+	                        scope: ngDialogScope,
+	                        data: attrs.ngDialogData,
+	                        showClose: attrs.ngDialogShowClose === 'false' ? false : (attrs.ngDialogShowClose === 'true' ? true : defaults.showClose),
+	                        closeByDocument: attrs.ngDialogCloseByDocument === 'false' ? false : (attrs.ngDialogCloseByDocument === 'true' ? true : defaults.closeByDocument),
+	                        closeByEscape: attrs.ngDialogCloseByEscape === 'false' ? false : (attrs.ngDialogCloseByEscape === 'true' ? true : defaults.closeByEscape),
+	                        overlay: attrs.ngDialogOverlay === 'false' ? false : (attrs.ngDialogOverlay === 'true' ? true : defaults.overlay),
+	                        preCloseCallback: attrs.ngDialogPreCloseCallback || defaults.preCloseCallback,
+	                        bodyClassName: attrs.ngDialogBodyClass || defaults.bodyClassName
+	                    });
+	                });
+	            }
+	        };
+	    }]);
+	
+	    return m;
+	}));
+
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(62);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../css-loader/index.js!./ngDialog.css", function() {
+				var newContent = require("!!./../../css-loader/index.js!./ngDialog.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "@-webkit-keyframes ngdialog-fadeout {\n  0% {\n    opacity: 1;\n  }\n\n  100% {\n    opacity: 0;\n  }\n}\n\n@keyframes ngdialog-fadeout {\n  0% {\n    opacity: 1;\n  }\n\n  100% {\n    opacity: 0;\n  }\n}\n\n@-webkit-keyframes ngdialog-fadein {\n  0% {\n    opacity: 0;\n  }\n\n  100% {\n    opacity: 1;\n  }\n}\n\n@keyframes ngdialog-fadein {\n  0% {\n    opacity: 0;\n  }\n\n  100% {\n    opacity: 1;\n  }\n}\n\n.ngdialog {\n  box-sizing: border-box;\n}\n\n.ngdialog *,\n.ngdialog *:before,\n.ngdialog *:after {\n  box-sizing: inherit;\n}\n\n.ngdialog {\n  position: fixed;\n  overflow: auto;\n  -webkit-overflow-scrolling: touch;\n  z-index: 10000;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n}\n\n.ngdialog.ngdialog-disabled-animation,\n.ngdialog.ngdialog-disabled-animation .ngdialog-overlay,\n.ngdialog.ngdialog-disabled-animation .ngdialog-content {\n  -webkit-animation: none!important;\n  animation: none!important;\n}\n\n.ngdialog-overlay {\n  position: fixed;\n  background: rgba(0, 0, 0, 0.4);\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  -webkit-backface-visibility: hidden;\n  -webkit-animation: ngdialog-fadein 0.5s;\n  animation: ngdialog-fadein 0.5s;\n}\n\n.ngdialog-no-overlay {\n  pointer-events: none;\n}\n\n.ngdialog.ngdialog-closing .ngdialog-overlay {\n  -webkit-backface-visibility: hidden;\n  -webkit-animation: ngdialog-fadeout 0.5s;\n  animation: ngdialog-fadeout 0.5s;\n}\n\n.ngdialog-content {\n  background: white;\n  -webkit-backface-visibility: hidden;\n  -webkit-animation: ngdialog-fadein 0.5s;\n  animation: ngdialog-fadein 0.5s;\n  pointer-events: all;\n}\n\n.ngdialog.ngdialog-closing .ngdialog-content {\n  -webkit-backface-visibility: hidden;\n  -webkit-animation: ngdialog-fadeout 0.5s;\n  animation: ngdialog-fadeout 0.5s;\n}\n\n.ngdialog-close:before {\n  font-family: 'Helvetica', Arial, sans-serif;\n  content: '\\D7';\n  cursor: pointer;\n}\n\nhtml.ngdialog-open,\nbody.ngdialog-open {\n  overflow: hidden;\n}", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(64);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../css-loader/index.js!./ngDialog-theme-default.css", function() {
+				var newContent = require("!!./../../css-loader/index.js!./ngDialog-theme-default.css");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 64 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(14)();
+	// imports
+	
+	
+	// module
+	exports.push([module.id, "@-webkit-keyframes ngdialog-flyin {\n  0% {\n    opacity: 0;\n    -webkit-transform: translateY(-40px);\n    transform: translateY(-40px);\n  }\n\n  100% {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n    transform: translateY(0);\n  }\n}\n\n@keyframes ngdialog-flyin {\n  0% {\n    opacity: 0;\n    -webkit-transform: translateY(-40px);\n    transform: translateY(-40px);\n  }\n\n  100% {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n    transform: translateY(0);\n  }\n}\n\n@-webkit-keyframes ngdialog-flyout {\n  0% {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n    transform: translateY(0);\n  }\n\n  100% {\n    opacity: 0;\n    -webkit-transform: translateY(-40px);\n    transform: translateY(-40px);\n  }\n}\n\n@keyframes ngdialog-flyout {\n  0% {\n    opacity: 1;\n    -webkit-transform: translateY(0);\n    transform: translateY(0);\n  }\n\n  100% {\n    opacity: 0;\n    -webkit-transform: translateY(-40px);\n    transform: translateY(-40px);\n  }\n}\n\n.ngdialog.ngdialog-theme-default {\n  padding-bottom: 160px;\n  padding-top: 160px;\n}\n\n.ngdialog.ngdialog-theme-default.ngdialog-closing .ngdialog-content {\n  -webkit-animation: ngdialog-flyout .5s;\n  animation: ngdialog-flyout .5s;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-content {\n  -webkit-animation: ngdialog-flyin .5s;\n  animation: ngdialog-flyin .5s;\n  background: #f0f0f0;\n  border-radius: 5px;\n  color: #444;\n  font-family: 'Helvetica',sans-serif;\n  font-size: 1.1em;\n  line-height: 1.5em;\n  margin: 0 auto;\n  max-width: 100%;\n  padding: 1em;\n  position: relative;\n  width: 450px;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-close {\n  border-radius: 5px;\n  cursor: pointer;\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-close:before {\n  background: transparent;\n  border-radius: 3px;\n  color: #bbb;\n  content: '\\D7';\n  font-size: 26px;\n  font-weight: 400;\n  height: 30px;\n  line-height: 26px;\n  position: absolute;\n  right: 3px;\n  text-align: center;\n  top: 3px;\n  width: 30px;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-close:hover:before,\n.ngdialog.ngdialog-theme-default .ngdialog-close:active:before {\n  color: #777;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-message {\n  margin-bottom: .5em;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-input {\n  margin-bottom: 1em;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-input textarea,\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"text\"],\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"password\"],\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"email\"],\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"url\"] {\n  background: #fff;\n  border: 0;\n  border-radius: 3px;\n  font-family: inherit;\n  font-size: inherit;\n  font-weight: inherit;\n  margin: 0 0 .25em;\n  min-height: 2.5em;\n  padding: .25em .67em;\n  width: 100%;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-input textarea:focus,\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"text\"]:focus,\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"password\"]:focus,\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"email\"]:focus,\n.ngdialog.ngdialog-theme-default .ngdialog-input input[type=\"url\"]:focus {\n  box-shadow: inset 0 0 0 2px #8dbdf1;\n  outline: none;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-buttons {\n  *zoom: 1;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-buttons:after {\n  content: '';\n  display: table;\n  clear: both;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-button {\n  border: 0;\n  border-radius: 3px;\n  cursor: pointer;\n  float: right;\n  font-family: inherit;\n  font-size: .8em;\n  letter-spacing: .1em;\n  line-height: 1em;\n  margin: 0 0 0 .5em;\n  padding: .75em 2em;\n  text-transform: uppercase;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-button:focus {\n  -webkit-animation: ngdialog-pulse 1.1s infinite;\n  animation: ngdialog-pulse 1.1s infinite;\n  outline: none;\n}\n\n@media (max-width: 568px) {\n  .ngdialog.ngdialog-theme-default .ngdialog-button:focus {\n    -webkit-animation: none;\n    animation: none;\n  }\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-button.ngdialog-button-primary {\n  background: #3288e6;\n  color: #fff;\n}\n\n.ngdialog.ngdialog-theme-default .ngdialog-button.ngdialog-button-secondary {\n  background: #e0e0e0;\n  color: #777;\n}", ""]);
+	
+	// exports
+
+
+/***/ },
+/* 65 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*!
+	 * State-based routing for AngularJS
+	 * @version v1.0.0-beta.1
+	 * @link https://ui-router.github.io
+	 * @license MIT License, http://www.opensource.org/licenses/MIT
+	 */
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory();
+		else if(typeof define === 'function' && define.amd)
+			define("angular-ui-router", [], factory);
+		else if(typeof exports === 'object')
+			exports["angular-ui-router"] = factory();
+		else
+			root["angular-ui-router"] = factory();
+	})(this, function() {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+	/******/
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+	/******/
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+	/******/
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+	/******/
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+	/******/
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+	/******/
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+	/******/
+	/******/
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+	/******/
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+	/******/
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+	/******/
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ function(module, exports) {
+	
+		"use strict";
+		/**
+		 * An event broadcast on `$rootScope` when the state transition **begins**.
+		 *
+		 * You can use `event.preventDefault()`
+		 * to prevent the transition from happening and then the transition promise will be
+		 * rejected with a `'transition prevented'` value.
+		 *
+		 * Additional arguments to the event handler are provided:
+		 * - `toState`: the Transition Target state
+		 * - `toParams`: the Transition Target Params
+		 * - `fromState`: the state the transition is coming from
+		 * - `fromParams`: the parameters from the state the transition is coming from
+		 * - `options`: any Transition Options
+		 * - `$transition$`: the [[Transition]]
+		 *
+		 * @example
+		 * ```
+		 *
+		 * $rootScope.$on('$stateChangeStart', function(event, transition) {
+		 *   event.preventDefault();
+		 *   // transitionTo() promise will be rejected with
+		 *   // a 'transition prevented' error
+		 * })
+		 * ```
+		 *
+		 * @deprecated use [[TransitionService.onStart]]
+		 * @event $stateChangeStart
+		 */
+		var $stateChangeStart;
+		/**
+		 * An event broadcast on `$rootScope` if a transition is **cancelled**.
+		 *
+		 * Additional arguments to the event handler are provided:
+		 * - `toState`: the Transition Target state
+		 * - `toParams`: the Transition Target Params
+		 * - `fromState`: the state the transition is coming from
+		 * - `fromParams`: the parameters from the state the transition is coming from
+		 * - `options`: any Transition Options
+		 * - `$transition$`: the [[Transition]] that was cancelled
+		 *
+		 * @deprecated
+		 * @event $stateChangeCancel
+		 */
+		var $stateChangeCancel;
+		/**
+		 *
+		 * An event broadcast on `$rootScope` once the state transition is **complete**.
+		 *
+		 * Additional arguments to the event handler are provided:
+		 * - `toState`: the Transition Target state
+		 * - `toParams`: the Transition Target Params
+		 * - `fromState`: the state the transition is coming from
+		 * - `fromParams`: the parameters from the state the transition is coming from
+		 * - `options`: any Transition Options
+		 * - `$transition$`: the [[Transition]] that just succeeded
+		 *
+		 * @deprecated use [[TransitionService.onStart]] and [[Transition.promise]], or [[Transition.onSuccess]]
+		 * @event $stateChangeSuccess
+		 */
+		var $stateChangeSuccess;
+		/**
+		 * An event broadcast on `$rootScope` when an **error occurs** during transition.
+		 *
+		 * It's important to note that if you
+		 * have any errors in your resolve functions (javascript errors, non-existent services, etc)
+		 * they will not throw traditionally. You must listen for this $stateChangeError event to
+		 * catch **ALL** errors.
+		 *
+		 * Additional arguments to the event handler are provided:
+		 * - `toState`: the Transition Target state
+		 * - `toParams`: the Transition Target Params
+		 * - `fromState`: the state the transition is coming from
+		 * - `fromParams`: the parameters from the state the transition is coming from
+		 * - `error`: The reason the transition errored.
+		 * - `options`: any Transition Options
+		 * - `$transition$`: the [[Transition]] that errored
+		 *
+		 * @deprecated use [[TransitionService.onStart]] and [[Transition.promise]], or [[Transition.onError]]
+		 * @event $stateChangeError
+		 */
+		var $stateChangeError;
+		/**
+		 * An event broadcast on `$rootScope` when a requested state **cannot be found** using the provided state name.
+		 *
+		 * The event is broadcast allowing any handlers a single chance to deal with the error (usually by
+		 * lazy-loading the unfound state). A `TargetState` object is passed to the listener handler,
+		 * you can see its properties in the example. You can use `event.preventDefault()` to abort the
+		 * transition and the promise returned from `transitionTo()` will be rejected with a
+		 * `'transition aborted'` error.
+		 *
+		 * Additional arguments to the event handler are provided:
+		 * - `unfoundState` Unfound State information. Contains: `to, toParams, options` properties.
+		 * - `fromState`: the state the transition is coming from
+		 * - `fromParams`: the parameters from the state the transition is coming from
+		 * - `options`: any Transition Options
+		 * @example
+		 *
+		 * <pre>
+		 * // somewhere, assume lazy.state has not been defined
+		 * $state.go("lazy.state", { a: 1, b: 2 }, { inherit: false });
+		 *
+		 * // somewhere else
+		 * $scope.$on('$stateNotFound', function(event, transition) {
+		 * function(event, unfoundState, fromState, fromParams){
+		 *     console.log(unfoundState.to); // "lazy.state"
+		 *     console.log(unfoundState.toParams); // {a:1, b:2}
+		 *     console.log(unfoundState.options); // {inherit:false} + default options
+		 * });
+		 * </pre>
+		 *
+		 * @deprecated use [[StateProvider.onInvalid]] // TODO: Move to [[StateService.onInvalid]]
+		 * @event $stateNotFound
+		 */
+		var $stateNotFound;
+		(function () {
+		    var isFunction = angular.isFunction, isString = angular.isString;
+		    function applyPairs(memo, keyValTuple) {
+		        var key, value;
+		        if (Array.isArray(keyValTuple))
+		            key = keyValTuple[0], value = keyValTuple[1];
+		        if (!isString(key))
+		            throw new Error("invalid parameters to applyPairs");
+		        memo[key] = value;
+		        return memo;
+		    }
+		    function stateChangeStartHandler($transition$) {
+		        if (!$transition$.options().notify || !$transition$.valid() || $transition$.ignored())
+		            return;
+		        var $injector = $transition$.injector().native;
+		        var $stateEvents = $injector.get('$stateEvents');
+		        var $rootScope = $injector.get('$rootScope');
+		        var $state = $injector.get('$state');
+		        var $urlRouter = $injector.get('$urlRouter');
+		        var enabledEvents = $stateEvents.provider.enabled();
+		        var toParams = $transition$.params("to");
+		        var fromParams = $transition$.params("from");
+		        if (enabledEvents.$stateChangeSuccess) {
+		            var startEvent = $rootScope.$broadcast('$stateChangeStart', $transition$.to(), toParams, $transition$.from(), fromParams, $transition$.options(), $transition$);
+		            if (startEvent.defaultPrevented) {
+		                if (enabledEvents.$stateChangeCancel) {
+		                    $rootScope.$broadcast('$stateChangeCancel', $transition$.to(), toParams, $transition$.from(), fromParams, $transition$.options(), $transition$);
+		                }
+		                //Don't update and resync url if there's been a new transition started. see issue #2238, #600
+		                if ($state.transition == null)
+		                    $urlRouter.update();
+		                return false;
+		            }
+		            $transition$.promise.then(function () {
+		                $rootScope.$broadcast('$stateChangeSuccess', $transition$.to(), toParams, $transition$.from(), fromParams, $transition$.options(), $transition$);
+		            });
+		        }
+		        if (enabledEvents.$stateChangeError) {
+		            $transition$.promise["catch"](function (error) {
+		                if (error && (error.type === 2 /* RejectType.SUPERSEDED */ || error.type === 3 /* RejectType.ABORTED */))
+		                    return;
+		                var evt = $rootScope.$broadcast('$stateChangeError', $transition$.to(), toParams, $transition$.from(), fromParams, error, $transition$.options(), $transition$);
+		                if (!evt.defaultPrevented) {
+		                    $urlRouter.update();
+		                }
+		            });
+		        }
+		    }
+		    stateNotFoundHandler.$inject = ['$to$', '$from$', '$state', '$rootScope', '$urlRouter'];
+		    function stateNotFoundHandler($to$, $from$, $state, $rootScope, $urlRouter) {
+		        var redirect = { to: $to$.identifier(), toParams: $to$.params(), options: $to$.options() };
+		        var e = $rootScope.$broadcast('$stateNotFound', redirect, $from$.state(), $from$.params());
+		        if (e.defaultPrevented || e.retry)
+		            $urlRouter.update();
+		        function redirectFn() {
+		            return $state.target(redirect.to, redirect.toParams, redirect.options);
+		        }
+		        if (e.defaultPrevented) {
+		            return false;
+		        }
+		        else if (e.retry || !!$state.get(redirect.to)) {
+		            return e.retry && isFunction(e.retry.then) ? e.retry.then(redirectFn) : redirectFn();
+		        }
+		    }
+		    $StateEventsProvider.$inject = ['$stateProvider'];
+		    function $StateEventsProvider($stateProvider) {
+		        $StateEventsProvider.prototype.instance = this;
+		        var runtime = false;
+		        var allEvents = ['$stateChangeStart', '$stateNotFound', '$stateChangeSuccess', '$stateChangeError'];
+		        var enabledStateEvents = allEvents.map(function (e) { return [e, true]; }).reduce(applyPairs, {});
+		        function assertNotRuntime() {
+		            if (runtime)
+		                throw new Error("Cannot enable events at runtime (use $stateEventsProvider");
+		        }
+		        /**
+		         * Enables the deprecated UI-Router 0.2.x State Events
+		         * [ '$stateChangeStart', '$stateNotFound', '$stateChangeSuccess', '$stateChangeError' ]
+		         */
+		        this.enable = function () {
+		            var events = [];
+		            for (var _i = 0; _i < arguments.length; _i++) {
+		                events[_i - 0] = arguments[_i];
+		            }
+		            assertNotRuntime();
+		            if (!events || !events.length)
+		                events = allEvents;
+		            events.forEach(function (event) { return enabledStateEvents[event] = true; });
+		        };
+		        /**
+		         * Disables the deprecated UI-Router 0.2.x State Events
+		         * [ '$stateChangeStart', '$stateNotFound', '$stateChangeSuccess', '$stateChangeError' ]
+		         */
+		        this.disable = function () {
+		            var events = [];
+		            for (var _i = 0; _i < arguments.length; _i++) {
+		                events[_i - 0] = arguments[_i];
+		            }
+		            assertNotRuntime();
+		            if (!events || !events.length)
+		                events = allEvents;
+		            events.forEach(function (event) { return delete enabledStateEvents[event]; });
+		        };
+		        this.enabled = function () { return enabledStateEvents; };
+		        this.$get = $get;
+		        $get.$inject = ['$transitions'];
+		        function $get($transitions) {
+		            runtime = true;
+		            if (enabledStateEvents["$stateNotFound"])
+		                $stateProvider.onInvalid(stateNotFoundHandler);
+		            if (enabledStateEvents.$stateChangeStart)
+		                $transitions.onBefore({}, stateChangeStartHandler, { priority: 1000 });
+		            return {
+		                provider: $StateEventsProvider.prototype.instance
+		            };
+		        }
+		    }
+		    angular.module('ui.router.state.events', ['ui.router.state'])
+		        .provider("$stateEvents", $StateEventsProvider)
+		        .run(['$stateEvents', function ($stateEvents) {
+		        }]);
+		})();
+	
+	
+	/***/ }
+	/******/ ])
+	});
+	;
+	//# sourceMappingURL=stateEvents.js.map
+
+/***/ },
+/* 66 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+	
+	// load the styles
+	var content = __webpack_require__(67);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(15)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -41238,21 +42851,21 @@
 	}
 
 /***/ },
-/* 49 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(13)();
+	exports = module.exports = __webpack_require__(14)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700);", ""]);
 	
 	// module
-	exports.push([module.id, "body {\n  font-family: sans-serif;\n  font-size: 1.1em;\n  margin: 0;\n  padding: 0;\n  font-family: 'Ubuntu', sans-serif; }\n\nh2 {\n  color: blue; }\n", "", {"version":3,"sources":["/./app/src/scss/main.scss","/./app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAGA;EACE,wBAAwB;EACxB,iBAAiB;EACjB,UAAU;EACV,WAAW;EACX,kCAAkC,EACnC;;AAED;EACE,YCZgB,EDajB","file":"main.scss","sourcesContent":["@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700);\n@import 'colors';\n\nbody {\n  font-family: sans-serif;\n  font-size: 1.1em;\n  margin: 0;\n  padding: 0;\n  font-family: 'Ubuntu', sans-serif;\n}\n\nh2 {\n  color: $basic-color;\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
+	exports.push([module.id, "body {\n  font-family: 'Ubuntu', sans-serif;\n  font-size: 1.1em;\n  margin: 0;\n  padding: 0; }\n\nh2 {\n  color: blue; }\n\n#intro {\n  background-color: lightsteelblue;\n  text-align: center; }\n", "", {"version":3,"sources":["/./app/src/scss/main.scss","/./app/src/scss/includes/_colors.scss"],"names":[],"mappings":"AAGA;EACE,kCAAkC;EAClC,iBAAiB;EACjB,UAAU;EACV,WAAW,EACZ;;AAED;EACE,YCXgB,EDYjB;;AAED;EACE,iCCbgC;EDchC,mBAAmB,EACpB","file":"main.scss","sourcesContent":["@import url(https://fonts.googleapis.com/css?family=Ubuntu:400,700);\n@import 'colors';\n\nbody {\n  font-family: 'Ubuntu', sans-serif;\n  font-size: 1.1em;\n  margin: 0;\n  padding: 0;\n}\n\nh2 {\n  color: $basic-color;\n}\n\n#intro {\n  background-color: $header-background;\n  text-align: center;\n}\n","$basic-color: blue;\n$background-color: grey;\n$header-background: lightsteelblue;\n$image-background: darken($header-background, 2%);\n"],"sourceRoot":"webpack://"}]);
 	
 	// exports
 
 
 /***/ },
-/* 50 */
+/* 68 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41261,17 +42874,20 @@
 	  value: true
 	});
 	exports.default = configRoutes;
-	configRoutes.$inject = ['$stateProvider', '$urlRouterProvider'];
+	configRoutes.$inject = ['$stateProvider', '$urlRouterProvider', '$transitionsProvider'];
 	var view = ['$stateParams', function (sP) {
 	  return sP.view;
 	}];
 	
-	function configRoutes($stateProvider, $urlRouterProvider) {
+	function configRoutes($stateProvider, $urlRouterProvider, $transitionsProvider) {
 	  $stateProvider.state('home', {
 	    url: '/',
-	    template: '<p><a ui-sref="albums">Albums</a></p>'
+	    template: '\n      <div id="intro">\n        Welcome to our image gallery.  Enjoy!<br>\n        <h2><a ui-sref="albums">Albums</a></h2>\n      </div>\n      '
 	  }).state('albums', {
 	    url: '/albums',
+	    data: {
+	      requiresAuth: true
+	    },
 	    params: {
 	      view: {
 	        dynamic: true
@@ -41282,9 +42898,12 @@
 	    },
 	    component: 'albums'
 	  }).state('albums.album', {
-	    url: '/:albumId?view',
+	    url: '/:albumId?view&image',
 	    params: {
 	      view: {
+	        dynamic: true
+	      },
+	      image: {
 	        dynamic: true
 	      }
 	    },
@@ -41294,12 +42913,105 @@
 	        return iS.getImagesByAlbum(sP.albumId);
 	      }],
 	      view: view,
+	      image: ['$stateParams', function (sP) {
+	        return sP.image;
+	      }],
 	      albums: ['albumService', function (aS) {
 	        return aS.get();
 	      }]
 	    }
 	  });
 	  $urlRouterProvider.otherwise('/');
+	  $transitionsProvider.onStart({
+	    to: function to(state) {
+	      return !!(state.data && state.data.requiresAuth);
+	    }
+	  }, function ($state) {
+	    $state.$to().name;
+	    // console.log(name);
+	  });
+	}
+	
+	// onStart.$inject = ['userService'];
+	//
+	// function onStart(userService) {
+	//   return userService.isAuthed();
+	// }
+
+/***/ },
+/* 69 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = configHttp;
+	configHttp.$inject = ['$httpProvider'];
+	
+	function configHttp($httpProvider) {
+	  $httpProvider.interceptors.push(interceptor);
+	}
+	
+	interceptor.$inject = ['$window', 'tokenService', '$state'];
+	
+	function interceptor($window, tokenService, $state) {
+	  return {
+	    request: function request(config) {
+	      config.headers = config.headers || {};
+	      var token = tokenService.get();
+	      if (token) {
+	        config.headers.authorization = 'Bearer ' + token;
+	      }
+	      return config;
+	    },
+	    responseError: function responseError(response) {
+	      if (response.status >= 400 && response.status < 500) {
+	        tokenService.remove();
+	        $state.go('home');
+	      }
+	      return Promise.reject(response);
+	    }
+	  };
+	};
+
+/***/ },
+/* 70 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = auth;
+	
+	auth.$inject = ['$rootScope', 'userService', 'ngDialog', '$state'];
+	
+	function auth($rootScope, userService, ngDialog, $state) {
+	  $rootScope.$on('$stateChangeStart', function (event, toState, toParams) {
+	
+	    if (toState.data && toState.data.requiresAuth && !userService.isAuthed()) {
+	      (function () {
+	
+	        event.preventDefault();
+	        var dialog = ngDialog.open({
+	          template: '<user-auth success="success(response)"></user-auth>',
+	          plain: true,
+	          controller: ['$scope', function ($scope) {
+	            $scope.success = function () {
+	              dialog.close();
+	              return $state.go(toState.name, toParams);
+	            };
+	          }]
+	        });
+	        dialog.closePromise.catch(function (err) {
+	          return alert('Login Failed\n\n' + err);
+	        });
+	      })();
+	    }
+	  });
 	}
 
 /***/ }
